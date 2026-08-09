@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة إجازات العاملين بالمصنع - 2027</title>
+    <title>نظام إدارة إجازات العاملين بالمصنع - 2027 (سحابي)</title>
     <style>
         :root {
             --primary: #1e293b;
@@ -18,14 +18,12 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { background-color: var(--bg); color: var(--text); direction: rtl; text-align: right; display: flex; min-height: 100vh; }
         
-        /* القائمة الجانبية */
         aside { width: 260px; background-color: var(--primary); color: #fff; position: fixed; height: 100vh; display: flex; flex-direction: column; }
         aside .logo { padding: 20px; font-size: 1.1rem; font-weight: bold; background: #0f172a; text-align: center; border-bottom: 1px solid #334155; }
         aside nav ul { list-style: none; padding: 15px 0; flex-grow: 1; }
         aside nav ul li a { display: block; padding: 12px 20px; color: #94a3b8; text-decoration: none; cursor: pointer; transition: 0.2s; }
         aside nav ul li a:hover, aside nav ul li a.active { background: #334155; color: #fff; border-right: 4px solid var(--secondary); }
 
-        /* المحتوى الرئيسي */
         .main-wrapper { margin-right: 260px; flex-grow: 1; display: flex; flex-direction: column; }
         header { background: var(--card); padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         main { padding: 30px; flex-grow: 1; }
@@ -33,25 +31,21 @@
         .view { display: none; }
         .view.active-view { display: block; }
 
-        /* البطاقات والإحصائيات */
         .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .card { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid var(--secondary); }
         .card h3 { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; }
         .card .num { font-size: 1.6rem; font-weight: bold; color: var(--primary); }
 
-        /* الجداول */
         .table-box { background: var(--card); border-radius: 8px; overflow: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 15px; }
         table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.9rem; }
         th, td { padding: 12px 15px; border-bottom: 1px solid var(--border); }
         th { background: #f8fafc; color: var(--primary); }
 
-        /* النماذج */
         .form-card { background: var(--card); padding: 30px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
         input, select, textarea { width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 6px; outline: none; font-size: 0.95rem; }
         
-        /* الأزرار والحالات */
         .btn { background: var(--secondary); color: #fff; border: none; padding: 9px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn:hover { opacity: 0.9; }
         .btn-success { background: var(--success); }
@@ -64,9 +58,8 @@
 </head>
 <body>
 
-    <!-- القائمة الجانبية -->
     <aside>
-        <div class="logo">إدارة إجازات المصنع (2027)</div>
+        <div class="logo">إدارة إجازات المصنع (سحابي)</div>
         <nav>
             <ul>
                 <li><a onclick="switchView('dashboard')" class="active" id="nav-dashboard">لوحة المؤشرات</a></li>
@@ -79,37 +72,33 @@
         </nav>
     </aside>
 
-    <!-- محتوى الصفحة -->
     <div class="main-wrapper">
         <header>
-            <b id="headerTitle">لوحة المؤشرات العامة - سنة 2027</b>
-            <span style="font-size: 0.9rem; color: #16a34a; font-weight: bold;">● النظام يعمل محلياً</span>
+            <b id="headerTitle">لوحة المؤشرات العامة - ربط سحابي (Firebase)</b>
+            <span style="font-size: 0.9rem; color: #16a34a; font-weight: bold;">● متصل بقاعدة البيانات</span>
         </header>
         
         <main>
-            <!-- 1. لوحة المؤشرات والاستعلام برقم البصمة -->
             <div id="view-dashboard" class="view active-view">
                 <h2 style="margin-bottom: 20px;">إحصائيات النظام العامة</h2>
                 <div class="cards">
-                    <div class="card"><h3>إجمالي العاملين</h3><div class="num" id="statEmp">42</div></div>
+                    <div class="card"><h3>إجمالي العاملين</h3><div class="num" id="statEmp">0</div></div>
                     <div class="card"><h3>الطلبات المعلقة</h3><div class="num" id="statPending">0</div></div>
                     <div class="card"><h3>الإجازات المعتمدة</h3><div class="num" id="statApproved">0</div></div>
                     <div class="card"><h3>الإجازات المنفذة</h3><div class="num" id="statExecuted">0</div></div>
                     <div class="card" style="border-top-color: var(--danger);"><h3>الطلبات المرفوضة</h3><div class="num" id="statRejected" style="color: var(--danger);">0</div></div>
                 </div>
 
-                <!-- صندوق الاستعلام السريع للعامل برقم البصمة -->
                 <div class="form-card" style="max-width: 100%; margin-top: 30px;">
                     <h3>استعلام رصيد وإجازات العامل برقم البصمة</h3>
-                    <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">أدخل رقم البصمة لمعرفة الأرصدة الحالية وإحصائيات الإجازات والأذونات المستخدمة:</p>
-                    <div style="display: flex; gap: 10px; max-width: 400px;">
+                    <div style="display: flex; gap: 10px; max-width: 400px; margin-top: 10px;">
                         <input type="text" id="dashFingerprint" placeholder="مثال: 779">
                         <button class="btn" onclick="checkDashboardEmployee()">استعلام</button>
                     </div>
                     <div id="dashEmpResult" style="display: none; margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 6px; border: 1px solid var(--border);"></div>
                 </div>
 
-                <h3 style="margin-top: 30px; margin-bottom: 10px; color: var(--primary);">سجل الإجازات المنفذة نهائياً (رؤية فقط)</h3>
+                <h3 style="margin-top: 30px; margin-bottom: 10px;">سجل الإجازات المنفذة نهائياً</h3>
                 <div class="table-box">
                     <table>
                         <thead>
@@ -124,7 +113,7 @@
                             </tr>
                         </thead>
                         <tbody id="dashboardExecutedBody">
-                            <tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة حتى الآن</td></tr>
+                            <tr><td colspan="7" style="text-align: center; color: #64748b;">جاري تحميل البيانات...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -140,17 +129,16 @@
                                 <th>نوع الإجازة</th>
                                 <th>الفترة</th>
                                 <th>عدد الأيام</th>
-                                <th>حالة الرفض / بواسطة من</th>
+                                <th>حالة الرفض</th>
                             </tr>
                         </thead>
                         <tbody id="dashboardRejectedBody">
-                            <tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد طلبات مرفوضة حتى الآن</td></tr>
+                            <tr><td colspan="7" style="text-align: center; color: #64748b;">جاري تحميل البيانات...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 2. تقديم طلب إجازة -->
             <div id="view-apply" class="view">
                 <div class="form-card">
                     <h2>تقديم طلب إجازة جديد (2027)</h2>
@@ -168,12 +156,12 @@
                                 <option value="إجازة عارضة">إجازة عارضة (حد أقصى 7 أيام)</option>
                                 <option value="إجازة سنوية">إجازة سنوية (حد أقصى 5 أيام)</option>
                                 <option value="إجازة اعتيادي">إجازة اعتيادي (من الباقي)</option>
-                                <option value="مرحل" id="carriedOption">مرحل (من السنة السابقة)</option>
+                                <option value="مرحل">مرحل (من السنة السابقة)</option>
                                 <option value="نصف يوم">نصف يوم (0.5 يوم)</option>
-                                <option value="إذن ساعتين">إذن ساعتين آخر اليوم (لا يُخصم من الرصيد)</option>
+                                <option value="إذن ساعتين">إذن ساعتين آخر اليوم</option>
                                 <option value="إجازة مرضية">إجازة مرضية</option>
-                                <option value="إجازة زواج">إجازة زواج (لا تُخصم من الرصيد)</option>
-                                <option value="إجازة وفاة">إجازة وفاة (لا تُخصم من الرصيد)</option>
+                                <option value="إجازة زواج">إجازة زواج</option>
+                                <option value="إجازة وفاة">إجازة وفاة</option>
                             </select>
                         </div>
                         <div class="form-group"><label>تاريخ البداية</label><input type="date" id="vacStart" required></div>
@@ -184,7 +172,6 @@
                 </div>
             </div>
 
-            <!-- 3. طلبات المشرف -->
             <div id="view-supervisor" class="view">
                 <h2>مراجعة طلبات المشرف</h2>
                 <div class="table-box">
@@ -206,7 +193,6 @@
                 </div>
             </div>
 
-            <!-- 4. رئيس القسم -->
             <div id="view-department" class="view">
                 <h2>اعتماد رئيس القسم النهائي</h2>
                 <div class="table-box">
@@ -228,9 +214,8 @@
                 </div>
             </div>
 
-            <!-- 5. الإجازات المعتمدة والمرفوضة -->
             <div id="view-approved" class="view">
-                <h2>الإجازات المعتمدة والمرفوضة (للمتابعة أو الحذف)</h2>
+                <h2>الإجازات المعتمدة والمرفوضة</h2>
                 <div class="table-box">
                     <table>
                         <thead>
@@ -240,8 +225,8 @@
                                 <th>النوع</th>
                                 <th>الفترة</th>
                                 <th>عدد الأيام</th>
-                                <th>الحالة / المشرف المسؤول</th>
-                                <th>الإجراءات المتاحة</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="approvedTableBody"></tbody>
@@ -249,13 +234,11 @@
                 </div>
             </div>
 
-            <!-- 6. قائمة العاملين -->
             <div id="view-employees" class="view">
-                <h2>قائمة العاملين المسجلين بالمصنع (2027)</h2>
-                <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">يتم خصم الأيام تلقائياً من رصيد العامل عند التنفيذ وإعادتها عند الحذف، ويمكنك تعديل الأرصدة يدوياً متى شئت.</p>
+                <h2>قائمة العاملين المسجلين بالمصنع</h2>
                 <div class="table-box">
                     <table>
-                        <thead><tr><th>رقم البصمة</th><th>اسم العامل</th><th>القسم</th><th>الرصيد الأساسي المتبقي</th><th>إجازات مرحلة (إدخال يدوي)</th></tr></thead>
+                        <thead><tr><th>رقم البصمة</th><th>اسم العامل</th><th>القسم</th><th>الرصيد الأساسي المتبقي</th><th>إجازات مرحلة</th></tr></thead>
                         <tbody id="empTableBody"></tbody>
                     </table>
                 </div>
@@ -263,8 +246,23 @@
         </main>
     </div>
 
-    <!-- البرمجة والشفرة -->
-    <script>
+    <!-- سكربت Firebase والربط السحابي -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, get, set, update, remove, child } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtJUVNr5iqadfwSpOd4sTrS0mrreHJJSk",
+            authDomain: "odafactory-5.firebaseapp.com",
+            projectId: "odafactory-5",
+            storageBucket: "odafactory-5.firebasestorage.app",
+            messagingSenderId: "925340298374",
+            appId: "1:925340298374:web:0b5ba55daedb1f22be3507"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
         const INITIAL_EMPLOYEES = [
             { name: "كريم محمد محمد عبده", fingerprint: "779", dept: "مصنع 5", totalBalance: 30, carriedBalance: 0 },
             { name: "احمد عصمت صادق ابراهيم", fingerprint: "715", dept: "مصنع 5", totalBalance: 30, carriedBalance: 0 },
@@ -300,7 +298,7 @@
             { name: "محمد احمد محمد عبدة", fingerprint: "2473", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "احمد سید احمد", fingerprint: "2359", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "صبری احمد محمد", fingerprint: "2011", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
-            { name: "محمد جمال حامد", fingerprint: "2358", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
+            { name: "محمد جمال حامد", fingerprint: "2358", dept: "مصنع 5", totalBalance: 21, callers: 0, totalBalance: 21, carriedBalance: 0 },
             { name: "احمد حسين عبد المنعم", fingerprint: "2435", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "معتز خلیفه محمد", fingerprint: "2360", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "محمد احمد فتحي", fingerprint: "2492", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
@@ -310,93 +308,67 @@
             { name: "محمد يوسف محمد عبد الحميد", fingerprint: "1103", dept: "مصنع 5", totalBalance: 30, carriedBalance: 0 }
         ];
 
-        const SUPERVISORS_LIST = [
-            "محمد سعيد محمدي",
-            "محمد عصمت زينهم",
-            "عمر فتحي كمال",
-            "محمد صلاح صميده"
-        ];
+        const SUPERVISORS_LIST = ["محمد سعيد محمدي", "محمد عصمت زينهم", "عمر فتحي كمال", "محمد صلاح صميده"];
 
-        function initStorage() {
-            if (!localStorage.getItem('employees_2027')) {
-                localStorage.setItem('employees_2027', JSON.stringify(INITIAL_EMPLOYEES));
-            } else {
-                let emps = JSON.parse(localStorage.getItem('employees_2027'));
-                emps.forEach(e => {
-                    e.dept = "مصنع 5";
-                    if (e.fingerprint === "779") {
-                        e.totalBalance = 30;
-                    }
-                });
-                localStorage.setItem('employees_2027', JSON.stringify(emps));
+        async function checkAndInitDB() {
+            const dbRef = ref(db);
+            const snap = await get(child(dbRef, 'employees_2027'));
+            if (!snap.exists()) {
+                await set(ref(db, 'employees_2027'), INITIAL_EMPLOYEES);
             }
-            if (!localStorage.getItem('requests_2027')) {
-                localStorage.setItem('requests_2027', JSON.stringify([]));
-            }
+            loadAllDataFromCloud();
         }
-        initStorage();
 
-        let currentActiveEmployee = null;
-
-        function switchView(viewId) {
+        window.switchView = function(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
             document.querySelectorAll('aside nav ul li a').forEach(a => a.classList.remove('active'));
-            
             document.getElementById('view-' + viewId).classList.add('active-view');
             document.getElementById('nav-' + viewId).classList.add('active');
-            refreshAllData();
+            loadAllDataFromCloud();
         }
 
-        // دالة حماية الصفحات بكلمات المرور المطلوبة
-        function tryOpenView(viewId) {
+        window.tryOpenView = function(viewId) {
             let pass = "";
             if (viewId === 'supervisor') {
                 pass = prompt("أدخل كلمة مرور صفحة طلبات المشرف:");
-                if (pass === "255166") {
-                    switchView('supervisor');
-                } else if (pass !== null) {
-                    alert("كلمة المرور غير صحيحة!");
-                }
+                if (pass === "255166") switchView('supervisor');
+                else if (pass !== null) alert("كلمة المرور غير صحيحة!");
             } else if (viewId === 'department') {
                 pass = prompt("أدخل كلمة مرور صفحة رئيس القسم:");
-                if (pass === "kareem150140") {
-                    switchView('department');
-                } else if (pass !== null) {
-                    alert("كلمة المرور غير صحيحة!");
-                }
-            } else if (viewId === 'approved') {
-                pass = prompt("أدخل كلمة مرور صفحة الإجازات المعتمدة:");
-                if (pass === "0125260775mM##") {
-                    switchView('approved');
-                } else if (pass !== null) {
-                    alert("كلمة المرور غير صحيحة!");
-                }
-            } else if (viewId === 'employees') {
-                pass = prompt("أدخل كلمة مرور قائمة العاملين:");
-                if (pass === "0125260775mM##") {
-                    switchView('employees');
-                } else if (pass !== null) {
-                    alert("كلمة المرور غير صحيحة!");
+                if (pass === "kareem150140") switchView('department');
+                else if (pass !== null) alert("كلمة المرور غير صحيحة!");
+            } else if (viewId === 'approved' || viewId === 'employees') {
+                pass = prompt("أدخل كلمة المرور:");
+                if (pass === "0125260775mM##") switchView(viewId);
+                else if (pass !== null) alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        window.updateCarriedBalance = async function(fingerprint, val) {
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
+            if (empsSnap.exists()) {
+                let emps = empsSnap.val();
+                let index = emps.findIndex(e => e.fingerprint === fingerprint);
+                if (index !== -1) {
+                    emps[index].carriedBalance = Number(val) || 0;
+                    await set(ref(db, 'employees_2027'), emps);
                 }
             }
         }
 
-        function updateCarriedBalance(fingerprint, val) {
-            let emps = JSON.parse(localStorage.getItem('employees_2027'));
-            let emp = emps.find(e => e.fingerprint === fingerprint);
-            if (emp) {
-                emp.carriedBalance = Number(val) || 0;
-                localStorage.setItem('employees_2027', JSON.stringify(emps));
-            }
-        }
-
-        function searchEmployee() {
+        let currentActiveEmployee = null;
+        window.searchEmployee = async function() {
             const fp = document.getElementById('appFingerprint').value.trim();
-            const emps = JSON.parse(localStorage.getItem('employees_2027'));
-            currentActiveEmployee = emps.find(e => e.fingerprint === fp);
-
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
             const infoBox = document.getElementById('employeeInfoBox');
             const applyForm = document.getElementById('applyForm');
+
+            if (!empsSnap.exists()) {
+                alert('لا توجد بيانات للعاملين!');
+                return;
+            }
+            let emps = empsSnap.val();
+            currentActiveEmployee = emps.find(e => e.fingerprint === fp);
 
             if (!currentActiveEmployee) {
                 alert('رقم البصمة غير موجود!');
@@ -410,12 +382,14 @@
             applyForm.style.display = 'block';
         }
 
-        function checkDashboardEmployee() {
+        window.checkDashboardEmployee = async function() {
             const fp = document.getElementById('dashFingerprint').value.trim();
-            const emps = JSON.parse(localStorage.getItem('employees_2027')) || [];
-            const reqs = JSON.parse(localStorage.getItem('requests_2027')) || [];
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
+            const reqsSnap = await get(child(ref(db), 'requests_2027'));
             const resultBox = document.getElementById('dashEmpResult');
 
+            if (!empsSnap.exists()) return;
+            let emps = empsSnap.val();
             let emp = emps.find(e => e.fingerprint === fp);
             if (!emp) {
                 resultBox.style.display = 'block';
@@ -423,15 +397,15 @@
                 return;
             }
 
+            let reqs = reqsSnap.exists() ? Object.values(reqsSnap.val()) : [];
             let empReqs = reqs.filter(r => r.fingerprint === fp && r.status === 'تم تنفيذ الإجازة');
 
-            let countAreda = 0, countEtiady = 0, countSanawya = 0, countCarried = 0, countHalfDay = 0, countSick = 0, countMarriage = 0, countDeath = 0;
-
+            let countAreda = 0, countSanawya = 0, countEtiady = 0, countCarried = 0, countHalfDay = 0, countSick = 0, countMarriage = 0, countDeath = 0;
             empReqs.forEach(r => {
                 let d = r.daysCount || 1;
                 if (r.type === 'إجازة عارضة') countAreda += d;
-                else if (r.type === 'إجازة اعتيادي') countEtiady += d;
                 else if (r.type === 'إجازة سنوية') countSanawya += d;
+                else if (r.type === 'إجازة اعتيادي') countEtiady += d;
                 else if (r.type === 'مرحل') countCarried += d;
                 else if (r.type === 'نصف يوم') countHalfDay += d;
                 else if (r.type === 'إجازة مرضية') countSick += d;
@@ -444,26 +418,19 @@
 
             resultBox.style.display = 'block';
             resultBox.innerHTML = `
-                <h4 style="color: var(--primary); margin-bottom: 8px;">بيانات العامل: ${emp.name} (بصمة: ${emp.fingerprint}) - قسم: ${emp.dept}</h4>
+                <h4 style="color: var(--primary); margin-bottom: 8px;">بيانات العامل: ${emp.name} (بصمة: ${emp.fingerprint})</h4>
                 <hr style="margin: 8px 0; border:0; border-top:1px solid var(--border);">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.9rem; margin-top: 10px;">
                     <div><b>الرصيد الأساسي المتبقي:</b> <span style="color:var(--success); font-weight:bold;">${emp.totalBalance} يوم</span></div>
                     <div><b>الرصيد المرحل المتبقي:</b> <span style="color:var(--secondary); font-weight:bold;">${emp.carriedBalance} يوم</span></div>
                     <div><b>إجازات عارضة مستنفذة:</b> ${countAreda} يوم</div>
                     <div><b>إجازات سنوية مستنفذة:</b> ${countSanawya} يوم</div>
-                    <div><b>إجازات اعتيادي مستنفذة:</b> ${countEtiady} يوم</div>
-                    <div><b>إجازات مرحلة مستنفذة:</b> ${countCarried} يوم</div>
-                    <div><b>نصف يوم (0.5):</b> ${countHalfDay} مرة</div>
-                    <div><b>إجازات مرضية:</b> ${countSick} يوم</div>
-                    <div><b>إجازات زواج / وفاة (لا تُخصم):</b> ${countMarriage + countDeath} يوم</div>
-                    <div><b>أذونات الساعات (لا تُخصم):</b> <span style="color: var(--danger); font-weight: bold;">${totalPermissionsAll} مرات</span></div>
-                </div>
-            `;
+                    <div><b>أذونات الساعات:</b> <span style="color: var(--danger); font-weight: bold;">${totalPermissionsAll} مرات</span></div>
+                </div>`;
         }
 
-        function submitVacation(e) {
+        window.submitVacation = async function(e) {
             e.preventDefault();
-            let reqs = JSON.parse(localStorage.getItem('requests_2027')) || [];
             let vacType = document.getElementById('vacType').value;
             let startDate = document.getElementById('vacStart').value;
             let endDate = document.getElementById('vacEnd').value;
@@ -476,39 +443,13 @@
             if (vacType === 'نصف يوم') diffDays = 0.5;
             if (vacType === 'إذن ساعتين' || vacType === 'إجازة زواج' || vacType === 'إجازة وفاة') diffDays = 0;
 
-            let empPreviousReqs = reqs.filter(r => r.fingerprint === currentActiveEmployee.fingerprint && !r.status.includes('مرفوض'));
-            
-            let usedAreda = 0;
-            let usedSanawya = 0;
+            const reqsSnap = await get(child(ref(db), 'requests_2027'));
+            let reqs = reqsSnap.exists() ? Object.values(reqsSnap.val()) : [];
 
-            empPreviousReqs.forEach(r => {
-                let d = r.daysCount || 0;
-                if (r.type === 'إجازة عارضة') usedAreda += d;
-                if (r.type === 'إجازة سنوية') usedSanawya += d;
-            });
+            let initialStatus = currentActiveEmployee.fingerprint === '779' ? 'في انتظار موافقة رئيس القسم' : 'في انتظار موافقة المشرف';
+            let initialSupName = currentActiveEmployee.fingerprint === '779' ? 'مباشر (استثناء الكود 779)' : '-';
 
-            if (vacType === 'إجازة عارضة') {
-                if ((usedAreda + diffDays) > 7) {
-                    alert('رصيد العارضة لا يسمح (الحد الأقصى المسموح به هو 7 أيام في السنة)!');
-                    return;
-                }
-            }
-
-            if (vacType === 'إجازة سنوية') {
-                if ((usedSanawya + diffDays) > 5) {
-                    alert('رصيد السنوي لا يسمح (الحد الأقصى المسموح به هو 5 أيام في السنة)!');
-                    return;
-                }
-            }
-
-            let initialStatus = 'في انتظار موافقة المشرف';
-            let initialSupName = '-';
-            if (currentActiveEmployee.fingerprint === '779') {
-                initialStatus = 'في انتظار موافقة رئيس القسم';
-                initialSupName = 'مباشر (استثناء الكود 779)';
-            }
-
-            reqs.push({
+            let newReq = {
                 id: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
                 name: currentActiveEmployee.name,
                 fingerprint: currentActiveEmployee.fingerprint,
@@ -518,275 +459,154 @@
                 daysCount: diffDays,
                 status: initialStatus,
                 supervisorName: initialSupName
-            });
-            localStorage.setItem('requests_2027', JSON.stringify(reqs));
-            
-            if (currentActiveEmployee.fingerprint === '779') {
-                alert('تم تقديم الطلب بنجاح وتحويله مباشرة إلى رئيس القسم!');
-            } else {
-                alert('تم تقديم الطلب بنجاح وتحويله للمشرف!');
-            }
+            };
+
+            reqs.push(newReq);
+            await set(ref(db, 'requests_2027'), reqs);
+            alert('تم تقديم الطلب بنجاح سحابياً!');
 
             document.getElementById('applyForm').reset();
             document.getElementById('employeeInfoBox').style.display = 'none';
             document.getElementById('applyForm').style.display = 'none';
-            refreshAllData();
+            loadAllDataFromCloud();
         }
 
-        function refreshAllData() {
-            const reqs = JSON.parse(localStorage.getItem('requests_2027')) || [];
-            const emps = JSON.parse(localStorage.getItem('employees_2027')) || [];
+        async function loadAllDataFromCloud() {
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
+            const reqsSnap = await get(child(ref(db), 'requests_2027'));
+
+            let emps = empsSnap.exists() ? empsSnap.val() : [];
+            let reqs = reqsSnap.exists() ? Object.values(reqsSnap.val()) : [];
 
             document.getElementById('statEmp').innerText = emps.length;
             document.getElementById('statPending').innerText = reqs.filter(r => r.status.includes('انتظار')).length;
             document.getElementById('statApproved').innerText = reqs.filter(r => r.status === 'معتمد').length;
-            
-            let executedReqs = reqs.filter(r => r.status === 'تم تنفيذ الإجازة');
-            document.getElementById('statExecuted').innerText = executedReqs.length;
+            document.getElementById('statExecuted').innerText = reqs.filter(r => r.status === 'تم تنفيذ الإجازة').length;
+            document.getElementById('statRejected').innerText = reqs.filter(r => r.status.includes('مرفوض')).length;
 
-            let rejectedReqs = reqs.filter(r => r.status.includes('مرفوض'));
-            document.getElementById('statRejected').innerText = rejectedReqs.length;
-
+            // الجدول المنفذ
             let dashExecBody = document.getElementById('dashboardExecutedBody');
-            dashExecBody.innerHTML = '';
-            if (executedReqs.length === 0) {
-                dashExecBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة حتى الآن</td></tr>`;
-            } else {
-                executedReqs.forEach(r => {
-                    dashExecBody.innerHTML += `
-                        <tr>
-                            <td>${r.id}</td>
-                            <td>${r.name}</td>
-                            <td>${r.fingerprint}</td>
-                            <td>${r.type}</td>
-                            <td>${r.start} لـ ${r.end}</td>
-                            <td><b>${r.daysCount} يوم</b></td>
-                            <td><span class="badge badge-s">منفذة نهائياً (رؤية فقط)</span></td>
-                        </tr>`;
-                });
-            }
+            let executedReqs = reqs.filter(r => r.status === 'تم تنفيذ الإجازة');
+            dashExecBody.innerHTML = executedReqs.length === 0 ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة</td></tr>` : '';
+            executedReqs.forEach(r => {
+                dashExecBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-s">منفذة</span></td></tr>`;
+            });
 
+            // المرفوض
             let dashRejBody = document.getElementById('dashboardRejectedBody');
-            dashRejBody.innerHTML = '';
-            if (rejectedReqs.length === 0) {
-                dashRejBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد طلبات مرفوضة حتى الآن</td></tr>`;
-            } else {
-                rejectedReqs.forEach(r => {
-                    dashRejBody.innerHTML += `
-                        <tr>
-                            <td>${r.id}</td>
-                            <td>${r.name}</td>
-                            <td>${r.fingerprint}</td>
-                            <td>${r.type}</td>
-                            <td>${r.start} لـ ${r.end}</td>
-                            <td><b>${r.daysCount} يوم</b></td>
-                            <td><span class="badge badge-r">${r.status}</span></td>
-                        </tr>`;
-                });
-            }
+            let rejectedReqs = reqs.filter(r => r.status.includes('مرفوض'));
+            dashRejBody.innerHTML = rejectedReqs.length === 0 ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد طلبات مرفوضة</td></tr>` : '';
+            rejectedReqs.forEach(r => {
+                dashRejBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-r">${r.status}</span></td></tr>`;
+            });
 
+            // المشرف
             let supBody = document.getElementById('supTableBody');
             supBody.innerHTML = '';
-            let pendingSupReqs = reqs.filter(r => r.status === 'في انتظار موافقة المشرف');
-            if (pendingSupReqs.length === 0) {
-                supBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b;">لا توجد طلبات معلقة للمشرف</td></tr>`;
-            } else {
-                reqs.forEach((r, i) => {
-                    if (r.status === 'في انتظار موافقة المشرف') {
-                        let supervisorOptions = SUPERVISORS_LIST.map(name => `<option value="${name}">${name}</option>`).join('');
-                        supBody.innerHTML += `
-                            <tr>
-                                <td>${r.id}</td>
-                                <td>${r.name}</td>
-                                <td>${r.fingerprint}</td>
-                                <td>${r.type}</td>
-                                <td>${r.start} لـ ${r.end}</td>
-                                <td><b>${r.daysCount} يوم</b></td>
-                                <td><span class="badge badge-p">${r.status}</span></td>
-                                <td>
-                                    <div style="display: flex; flex-direction: column; gap: 5px;">
-                                        <select id="supSelect-${i}" style="padding: 4px; font-size: 0.85rem;">
-                                            <option value="">اختر اسم المشرف...</option>
-                                            ${supervisorOptions}
-                                        </select>
-                                        <div style="display: flex; gap: 5px;">
-                                            <button class="btn btn-success" style="padding:4px 8px; flex:1;" onclick="supAction(${i}, 'approve')">موافقة</button>
-                                            <button class="btn btn-danger" style="padding:4px 8px; flex:1;" onclick="supAction(${i}, 'reject')">رفض</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>`;
-                    }
-                });
-            }
+            let pendingSup = reqs.map((r, index) => ({...r, originalIndex: index})).filter(r => r.status === 'في انتظار موافقة المشرف');
+            if (pendingSup.length === 0) supBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b;">لا توجد طلبات معلقة للمشرف</td></tr>`;
+            pendingSup.forEach(r => {
+                let supervisorOptions = SUPERVISORS_LIST.map(name => `<option value="${name}">${name}</option>`).join('');
+                supBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-p">${r.status}</span></td><td><div style="display:flex; flex-direction:column; gap:5px;"><select id="supSelect-${r.originalIndex}"><option value="">اختر المشرف...</option>${supervisorOptions}</select><div style="display:flex; gap:5px;"><button class="btn btn-success" onclick="supAction(${r.originalIndex}, 'approve')">موافقة</button><button class="btn btn-danger" onclick="supAction(${r.originalIndex}, 'reject')">رفض</button></div></div></td></tr>`;
+            });
 
+            // رئيس القسم
             let deptBody = document.getElementById('deptTableBody');
             deptBody.innerHTML = '';
-            let pendingDeptReqs = reqs.filter(r => r.status === 'في انتظار موافقة رئيس القسم');
-            if (pendingDeptReqs.length === 0) {
-                deptBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b;">لا توجد طلبات معلقة لرئيس القسم</td></tr>`;
-            } else {
-                reqs.forEach((r, i) => {
-                    if (r.status === 'في انتظار موافقة رئيس القسم') {
-                        deptBody.innerHTML += `
-                            <tr>
-                                <td>${r.id}</td>
-                                <td>${r.name}</td>
-                                <td>${r.fingerprint}</td>
-                                <td>${r.type}</td>
-                                <td>${r.start} لـ ${r.end}</td>
-                                <td><b>${r.daysCount} يوم</b></td>
-                                <td><span class="badge badge-p">${r.status} (بواسطة مشرف: ${r.supervisorName})</span></td>
-                                <td>
-                                    <button class="btn btn-success" style="padding:4px 8px; margin-left: 5px;" onclick="deptAction(${i}, 'approve')">اعتماد</button>
-                                    <button class="btn btn-danger" style="padding:4px 8px;" onclick="deptAction(${i}, 'reject')">رفض</button>
-                                </td>
-                            </tr>`;
-                    }
-                });
-            }
+            let pendingDept = reqs.map((r, index) => ({...r, originalIndex: index})).filter(r => r.status === 'في انتظار موافقة رئيس القسم');
+            if (pendingDept.length === 0) deptBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b;">لا توجد طلبات لرئيس القسم</td></tr>`;
+            pendingDept.forEach(r => {
+                deptBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-p">بواسطة مشرف: ${r.supervisorName}</span></td><td><button class="btn btn-success" onclick="deptAction(${r.originalIndex}, 'approve')">اعتماد</button> <button class="btn btn-danger" onclick="deptAction(${r.originalIndex}, 'reject')">رفض</button></td></tr>`;
+            });
 
+            // المعتمدة
             let appBody = document.getElementById('approvedTableBody');
             appBody.innerHTML = '';
-            let activeList = reqs.filter(r => r.status === 'معتمد' || r.status === 'تم تنفيذ الإجازة' || r.status.includes('مرفوض'));
-            if (activeList.length === 0) {
-                appBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد طلبات معتمدة أو منفذة أو مرفوضة</td></tr>`;
-            } else {
-                reqs.forEach((r, i) => {
-                    if (r.status === 'معتمد' || r.status === 'تم تنفيذ الإجازة' || r.status.includes('مرفوض')) {
-                        let isDone = r.status === 'تم تنفيذ الإجازة';
-                        let isRejected = r.status.includes('مرفوض');
-                        let badgeClass = isDone ? 'badge-s' : (isRejected ? 'badge-r' : 'badge-p');
-                        
-                        appBody.innerHTML += `
-                            <tr>
-                                <td>${r.id}</td>
-                                <td>${r.name}</td>
-                                <td>${r.type}</td>
-                                <td>${r.start} لـ ${r.end}</td>
-                                <td><b>${r.daysCount} يوم</b></td>
-                                <td>
-                                    <span class="badge ${badgeClass}">${r.status}</span>
-                                    ${r.supervisorName && r.supervisorName !== '-' ? `<br><small style="color:#64748b;">المشرف: ${r.supervisorName}</small>` : ''}
-                                </td>
-                                <td>
-                                    ${!isDone && !isRejected ? `<button class="btn btn-success" style="padding:4px 8px; margin-left: 5px;" onclick="executeVac(${i})">تنفيذ وخصم</button>` : ''}
-                                    <button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRequest(${i})">حذف الطلب</button>
-                                </td>
-                            </tr>`;
-                    }
-                });
-            }
+            let activeList = reqs.map((r, index) => ({...r, originalIndex: index})).filter(r => r.status === 'معتمد' || r.status === 'تم تنفيذ الإجازة' || r.status.includes('مرفوض'));
+            if (activeList.length === 0) appBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد سجلات</td></tr>`;
+            activeList.forEach(r => {
+                let isDone = r.status === 'تم تنفيذ الإجازة';
+                let isRejected = r.status.includes('مرفوض');
+                appBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge ${isDone?'badge-s':(isRejected?'badge-r':'badge-p')}">${r.status}</span></td><td>${!isDone && !isRejected ? `<button class="btn btn-success" onclick="executeVac(${r.originalIndex})">تنفيذ وخصم</button> ` : ''}<button class="btn btn-danger" onclick="deleteRequest(${r.originalIndex})">حذف</button></td></tr>`;
+            });
 
+            // العاملين
             let empBody = document.getElementById('empTableBody');
             empBody.innerHTML = '';
             emps.forEach(e => {
-                empBody.innerHTML += `
-                    <tr>
-                        <td>${e.fingerprint}</td>
-                        <td>${e.name}</td>
-                        <td>${e.dept}</td>
-                        <td><b>${e.totalBalance}</b> يوم</td>
-                        <td><input type="number" min="0" value="${e.carriedBalance}" style="width: 100px; padding: 5px;" onchange="updateCarriedBalance('${e.fingerprint}', this.value)"></td>
-                    </tr>`;
+                empBody.innerHTML += `<tr><td>${e.fingerprint}</td><td>${e.name}</td><td>${e.dept}</td><td><b>${e.totalBalance}</b> يوم</td><td><input type="number" min="0" value="${e.carriedBalance}" style="width: 100px; padding: 5px;" onchange="updateCarriedBalance('${e.fingerprint}', this.value)"></td></tr>`;
             });
         }
 
-        function supAction(i, action) {
-            let reqs = JSON.parse(localStorage.getItem('requests_2027'));
+        window.supAction = async function(i, action) {
             let selectedSup = document.getElementById(`supSelect-${i}`).value;
-
-            if (!selectedSup) {
-                alert('برجاء اختيار اسم المشرف أولاً قبل اتخاذ القرار!');
-                return;
-            }
-
+            if (!selectedSup) { alert('اختر اسم المشرف أولاً!'); return; }
+            const reqsSnap = await get(child(ref(db), 'requests_2027'));
+            let reqs = reqsSnap.val();
             reqs[i].supervisorName = selectedSup;
-
-            if (action === 'approve') {
-                reqs[i].status = 'في انتظار موافقة رئيس القسم';
-            } else {
-                reqs[i].status = `مرفوض من المشرف (${selectedSup})`;
-            }
-            localStorage.setItem('requests_2027', JSON.stringify(reqs));
-            refreshAllData();
+            reqs[i].status = action === 'approve' ? 'في انتظار موافقة رئيس القسم' : `مرفوض من المشرف (${selectedSup})`;
+            await set(ref(db, 'requests_2027'), reqs);
+            loadAllDataFromCloud();
         }
 
-        function deptAction(i, action) {
-            let reqs = JSON.parse(localStorage.getItem('requests_2027'));
-            if (action === 'approve') {
-                reqs[i].status = 'معتمد';
-            } else {
-                reqs[i].status = 'مرفوض من رئيس القسم';
-            }
-            localStorage.setItem('requests_2027', JSON.stringify(reqs));
-            refreshAllData();
+        window.deptAction = async function(i, action) {
+            const reqsSnap = await get(child(ref(db), 'requests_2027'));
+            let reqs = reqsSnap.val();
+            reqs[i].status = action === 'approve' ? 'معتمد' : 'مرفوض من رئيس القسم';
+            await set(ref(db, 'requests_2027'), reqs);
+            loadAllDataFromCloud();
         }
 
-        function executeVac(i) {
-            let reqs = JSON.parse(localStorage.getItem('requests_2027'));
-            let emps = JSON.parse(localStorage.getItem('employees_2027'));
+        window.executeVac = async function(i) {
+            const reqsSnap = await get(child(ref(db), 'requests_2027'));
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
+            let reqs = reqsSnap.val();
+            let emps = empsSnap.val();
             let req = reqs[i];
 
             let emp = emps.find(e => e.fingerprint === req.fingerprint);
             if (emp) {
-                let daysToDeduced = req.daysCount || 0;
-                if (req.type !== 'إذن ساعتين' && req.type !== 'إجازة زواج' && req.type !== 'إجازة وفاة' && daysToDeduced > 0) {
-                    if (req.type === 'مرحل') {
-                        if (emp.carriedBalance >= daysToDeduced) {
-                            emp.carriedBalance -= daysToDeduced;
-                        } else {
-                            alert('عذراً، رصيد الإجازات المرحلة لا يكفي!');
-                            return;
-                        }
+                let days = req.daysCount || 0;
+                if (req.type !== 'إذن ساعتين' && req.type !== 'إجازة زواج' && req.type !== 'إجازة وفاة' && days > 0) {
+                    if (emp.totalBalance >= days) {
+                        emp.totalBalance -= days;
                     } else {
-                        if (emp.totalBalance >= daysToDeduced) {
-                            emp.totalBalance -= daysToDeduced;
-                        } else {
-                            alert('عذراً، الرصيد الأساسي للعامل لا يكفي لخصم هذه الإجازة!');
-                            return;
-                        }
+                        alert('الرصيد لا يكفي للخصم!');
+                        return;
                     }
                 }
-                localStorage.setItem('employees_2027', JSON.stringify(emps));
+                await set(ref(db, 'employees_2027'), emps);
             }
 
             reqs[i].status = 'تم تنفيذ الإجازة';
-            localStorage.setItem('requests_2027', JSON.stringify(reqs));
-            alert('تم تنفيذ الطلب بنجاح وتحديث الرصيد!');
-            refreshAllData();
+            await set(ref(db, 'requests_2027'), reqs);
+            alert('تم التنفيذ بنجاح وتحديث الرصيد سحابياً!');
+            loadAllDataFromCloud();
         }
 
-        function deleteRequest(i) {
-            if (!confirm('هل أنت متأكد من حذف هذا الطلب؟ (إذا كان منفذاً سيتم إعادة الأيام لرصيد العامل إن وجدت).')) {
-                return;
-            }
-
-            let reqs = JSON.parse(localStorage.getItem('requests_2027'));
-            let emps = JSON.parse(localStorage.getItem('employees_2027'));
+        window.deleteRequest = async function(i) {
+            if (!confirm('هل أنت متأكد من الحذف؟')) return;
+            const reqsSnap = await get(child(ref(db), 'requests_2027'));
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
+            let reqs = reqsSnap.val();
+            let emps = empsSnap.val();
             let req = reqs[i];
 
-            if (req.status === 'تم تنفيذ الإجازة' && req.type !== 'إذن ساعتين' && req.type !== 'إجازة زواج' && req.type !== 'إجازة وفاة') {
+            if (req.status === 'تم تنفيذ الإجازة' && req.daysCount > 0) {
                 let emp = emps.find(e => e.fingerprint === req.fingerprint);
                 if (emp) {
-                    let daysToRestore = req.daysCount || 0;
-                    if (req.type === 'مرحل') {
-                        emp.carriedBalance += daysToRestore;
-                    } else {
-                        emp.totalBalance += daysToRestore;
-                    }
-                    localStorage.setItem('employees_2027', JSON.stringify(emps));
+                    emp.totalBalance += req.daysCount;
+                    await set(ref(db, 'employees_2027'), emps);
                 }
             }
 
             reqs.splice(i, 1);
-            localStorage.setItem('requests_2027', JSON.stringify(reqs));
-
-            alert('تم حذف الطلب بنجاح.');
-            refreshAllData();
+            await set(ref(db, 'requests_2027'), reqs);
+            alert('تم الحذف بنجاح.');
+            loadAllDataFromCloud();
         }
 
-        refreshAllData();
+        checkAndInitDB();
     </script>
 </body>
 </html>
