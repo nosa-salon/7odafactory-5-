@@ -16,17 +16,20 @@
             --border: #cbd5e1;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); direction: rtl; text-align: right; display: flex; min-height: 100vh; }
+        body { background-color: var(--bg); color: var(--text); direction: rtl; text-align: right; display: flex; min-height: 100vh; flex-direction: column; }
         
-        aside { width: 260px; background-color: var(--primary); color: #fff; position: fixed; height: 100vh; display: flex; flex-direction: column; }
+        aside { width: 260px; background-color: var(--primary); color: #fff; position: fixed; height: 100vh; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; }
         aside .logo { padding: 20px; font-size: 1.1rem; font-weight: bold; background: #0f172a; text-align: center; border-bottom: 1px solid #334155; }
         aside nav ul { list-style: none; padding: 15px 0; flex-grow: 1; }
         aside nav ul li a { display: block; padding: 12px 20px; color: #94a3b8; text-decoration: none; cursor: pointer; transition: 0.2s; }
         aside nav ul li a:hover, aside nav ul li a.active { background: #334155; color: #fff; border-right: 4px solid var(--secondary); }
 
-        .main-wrapper { margin-right: 260px; flex-grow: 1; display: flex; flex-direction: column; }
-        header { background: var(--card); padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .main-wrapper { margin-right: 260px; flex-grow: 1; display: flex; flex-direction: column; transition: 0.3s ease; width: calc(100% - 260px); }
+        header { background: var(--card); padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         main { padding: 30px; flex-grow: 1; }
+
+        .mobile-menu-btn { display: none; background: var(--primary); color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
 
         .view { display: none; }
         .view.active-view { display: block; }
@@ -37,7 +40,7 @@
         .card .num { font-size: 1.6rem; font-weight: bold; color: var(--primary); }
 
         .table-box { background: var(--card); border-radius: 8px; overflow: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.9rem; white-space: nowrap; }
         th, td { padding: 12px 15px; border-bottom: 1px solid var(--border); }
         th { background: #f8fafc; color: var(--primary); }
 
@@ -54,28 +57,45 @@
         .badge-p { background: #fef3c7; color: #92400e; }
         .badge-s { background: #dcfce7; color: #166534; }
         .badge-r { background: #fee2e2; color: #991b1b; }
+
+        /* Media Queries للموبايل */
+        @media (max-width: 992px) {
+            aside { transform: translateX(100%); }
+            aside.mobile-open { transform: translateX(0); }
+            .main-wrapper { margin-right: 0; width: 100%; }
+            .mobile-menu-btn { display: inline-block; }
+            .sidebar-overlay.active { display: block; }
+            main { padding: 15px; }
+            header { padding: 12px 15px; flex-direction: column; align-items: flex-start; }
+            header > div { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        }
     </style>
 </head>
 <body>
 
-    <aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileMenu()"></div>
+
+    <aside id="sidebar">
         <div class="logo">إدارة إجازات المصنع (سحابي)</div>
         <nav>
             <ul>
-                <li><a onclick="switchView('dashboard')" class="active" id="nav-dashboard">لوحة المؤشرات</a></li>
-                <li><a onclick="switchView('apply')" id="nav-apply">تقديم طلب إجازة</a></li>
-                <li><a onclick="tryOpenView('supervisor')" id="nav-supervisor">طلبات المشرف</a></li>
-                <li><a onclick="tryOpenView('department')" id="nav-department">رئيس القسم</a></li>
-                <li><a onclick="tryOpenView('approved')" id="nav-approved">الإجازات المعتمدة والمرفوضة</a></li>
-                <li><a onclick="tryOpenView('employees')" id="nav-employees">قائمة العاملين</a></li>
+                <li><a onclick="switchView('dashboard'); toggleMobileMenu();" class="active" id="nav-dashboard">لوحة المؤشرات</a></li>
+                <li><a onclick="switchView('apply'); toggleMobileMenu();" id="nav-apply">تقديم طلب إجازة</a></li>
+                <li><a onclick="tryOpenView('supervisor'); toggleMobileMenu();" id="nav-supervisor">طلبات المشرف</a></li>
+                <li><a onclick="tryOpenView('department'); toggleMobileMenu();" id="nav-department">رئيس القسم</a></li>
+                <li><a onclick="tryOpenView('approved'); toggleMobileMenu();" id="nav-approved">الإجازات المعتمدة والمرفوضة</a></li>
+                <li><a onclick="tryOpenView('employees'); toggleMobileMenu();" id="nav-employees">قائمة العاملين</a></li>
             </ul>
         </nav>
     </aside>
 
     <div class="main-wrapper">
         <header>
-            <b id="headerTitle">لوحة المؤشرات العامة - ربط سحابي (Firebase)</b>
-            <span style="font-size: 0.9rem; color: #16a34a; font-weight: bold;">● متصل بقاعدة البيانات</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰ القائمة</button>
+                <span style="font-size: 0.85rem; color: #16a34a; font-weight: bold;">● متصل بقاعدة البيانات</span>
+            </div>
+            <b id="headerTitle" style="font-size: 0.95rem; margin-top: 5px;">لوحة المؤشرات العامة - ربط سحابي (Firebase)</b>
         </header>
         
         <main>
@@ -91,7 +111,7 @@
 
                 <div class="form-card" style="max-width: 100%; margin-top: 30px;">
                     <h3>استعلام رصيد وإجازات العامل برقم البصمة</h3>
-                    <div style="display: flex; gap: 10px; max-width: 400px; margin-top: 10px;">
+                    <div style="display: flex; gap: 10px; max-width: 400px; margin-top: 10px; flex-wrap: wrap;">
                         <input type="text" id="dashFingerprint" placeholder="مثال: 779">
                         <button class="btn" onclick="checkDashboardEmployee()">استعلام</button>
                     </div>
@@ -140,7 +160,7 @@
             </div>
 
             <div id="view-apply" class="view">
-                <div class="form-card">
+                <div class="form-card" style="max-width: 100%;">
                     <h2>تقديم طلب إجازة جديد (2027)</h2>
                     <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--border);">
                     <div class="form-group">
@@ -310,6 +330,13 @@
 
         const SUPERVISORS_LIST = ["محمد سعيد محمدي", "محمد عصمت زينهم", "عمر فتحي كمال", "محمد صلاح صميده"];
 
+        window.toggleMobileMenu = function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        }
+
         async function checkAndInitDB() {
             const dbRef = ref(db);
             const snap = await get(child(dbRef, 'employees_2027'));
@@ -344,7 +371,6 @@
             }
         }
 
-        // تحديث الرصيد الأساسي يدوياً
         window.updateTotalBalance = async function(fingerprint, val) {
             const empsSnap = await get(child(ref(db), 'employees_2027'));
             if (empsSnap.exists()) {
@@ -395,7 +421,6 @@
             applyForm.style.display = 'block';
         }
 
-        // استعلام الرصيد والإجازات والاذونات بالأنواع المحددة بالتفصيل
         window.checkDashboardEmployee = async function() {
             const fp = document.getElementById('dashFingerprint').value.trim();
             const empsSnap = await get(child(ref(db), 'employees_2027'));
@@ -430,10 +455,6 @@
                 detailsHtml = `<div style="color: #64748b; font-size: 0.9rem; margin-top: 5px;">لا توجد إجازات منفذة مسجلة لهذا العامل.</div>`;
             } else {
                 detailsHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px;">`;
-                for (let [type, data] in Object.entries(statsByType)) {
-                    // التعديل هنا لضمان جلب كل نوع بوصفه بالتحديد
-                }
-                // تجميع كل الأنواع بشكل ديناميكي صحيح
                 for (let key in statsByType) {
                     detailsHtml += `<div style="background:#fff; padding:8px 12px; border:1px solid var(--border); border-radius:4px;"><b>${key}:</b> ${statsByType[key].totalDays} يوم (عدد المرات: ${statsByType[key].count})</div>`;
                 }
@@ -444,11 +465,11 @@
             resultBox.innerHTML = `
                 <h4 style="color: var(--primary); margin-bottom: 8px;">بيانات العامل: ${emp.name} (بصمة: ${emp.fingerprint})</h4>
                 <hr style="margin: 8px 0; border:0; border-top:1px solid var(--border);">
-                <div style="display: flex; gap: 15px; font-size: 0.95rem; margin-top: 5px;">
+                <div style="display: flex; gap: 15px; font-size: 0.95rem; margin-top: 5px; flex-wrap: wrap;">
                     <div><b>الرصيد الأساسي المتبقي:</b> <span style="color:var(--success); font-weight:bold;">${emp.totalBalance} يوم</span></div>
                     <div><b>الرصيد المرحل المتبقي:</b> <span style="color:var(--secondary); font-weight:bold;">${emp.carriedBalance} يوم</span></div>
                 </div>
-                <div style="margin-تفاصيل: 15px 0 5px 0; font-weight: bold; color: var(--primary);">تفصيل الإجازات والأذونات المنفذة حسب النوع:</div>
+                <div style="margin-top: 15px; font-weight: bold; color: var(--primary);">تفصيل الإجازات والأذونات المنفذة حسب النوع:</div>
                 ${detailsHtml}`;
         }
 
@@ -507,7 +528,6 @@
             document.getElementById('statExecuted').innerText = reqs.filter(r => r.status === 'تم تنفيذ الإجازة').length;
             document.getElementById('statRejected').innerText = reqs.filter(r => r.status.includes('مرفوض')).length;
 
-            // الجدول المنفذ
             let dashExecBody = document.getElementById('dashboardExecutedBody');
             let executedReqs = reqs.filter(r => r.status === 'تم تنفيذ الإجازة');
             dashExecBody.innerHTML = executedReqs.length === 0 ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة</td></tr>` : '';
@@ -515,7 +535,6 @@
                 dashExecBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-s">منفذة</span></td></tr>`;
             });
 
-            // المرفوض
             let dashRejBody = document.getElementById('dashboardRejectedBody');
             let rejectedReqs = reqs.filter(r => r.status.includes('مرفوض'));
             dashRejBody.innerHTML = rejectedReqs.length === 0 ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد طلبات مرفوضة</td></tr>` : '';
@@ -523,7 +542,6 @@
                 dashRejBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-r">${r.status}</span></td></tr>`;
             });
 
-            // المشرف
             let supBody = document.getElementById('supTableBody');
             supBody.innerHTML = '';
             let pendingSup = reqs.map((r, index) => ({...r, originalIndex: index})).filter(r => r.status === 'في انتظار موافقة المشرف');
@@ -533,7 +551,6 @@
                 supBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-p">${r.status}</span></td><td><div style="display:flex; flex-direction:column; gap:5px;"><select id="supSelect-${r.originalIndex}"><option value="">اختر المشرف...</option>${supervisorOptions}</select><div style="display:flex; gap:5px;"><button class="btn btn-success" onclick="supAction(${r.originalIndex}, 'approve')">موافقة</button><button class="btn btn-danger" onclick="supAction(${r.originalIndex}, 'reject')">رفض</button></div></div></td></tr>`;
             });
 
-            // رئيس القسم
             let deptBody = document.getElementById('deptTableBody');
             deptBody.innerHTML = '';
             let pendingDept = reqs.map((r, index) => ({...r, originalIndex: index})).filter(r => r.status === 'في انتظار موافقة رئيس القسم');
@@ -542,7 +559,6 @@
                 deptBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-p">بواسطة مشرف: ${r.supervisorName}</span></td><td><button class="btn btn-success" onclick="deptAction(${r.originalIndex}, 'approve')">اعتماد</button> <button class="btn btn-danger" onclick="deptAction(${r.originalIndex}, 'reject')">رفض</button></td></tr>`;
             });
 
-            // المعتمدة
             let appBody = document.getElementById('approvedTableBody');
             appBody.innerHTML = '';
             let activeList = reqs.map((r, index) => ({...r, originalIndex: index})).filter(r => r.status === 'معتمد' || r.status === 'تم تنفيذ الإجازة' || r.status.includes('مرفوض'));
@@ -553,7 +569,6 @@
                 appBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge ${isDone?'badge-s':(isRejected?'badge-r':'badge-p')}">${r.status}</span></td><td>${!isDone && !isRejected ? `<button class="btn btn-success" onclick="executeVac(${r.originalIndex})">تنفيذ وخصم</button> ` : ''}<button class="btn btn-danger" onclick="deleteRequest(${r.originalIndex})">حذف</button></td></tr>`;
             });
 
-            // العاملين (مع إمكانية تعديل الرصيد الأساسي يدوياً بالأيدي)
             let empBody = document.getElementById('empTableBody');
             empBody.innerHTML = '';
             emps.forEach(e => {
