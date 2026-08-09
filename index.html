@@ -238,7 +238,7 @@
                 <h2>قائمة العاملين المسجلين بالمصنع</h2>
                 <div class="table-box">
                     <table>
-                        <thead><tr><th>رقم البصمة</th><th>اسم العامل</th><th>القسم</th><th>الرصيد الأساسي المتبقي</th><th>إجازات مرحلة</th></tr></thead>
+                        <thead><tr><th>رقم البصمة</th><th>اسم العامل</th><th>القسم</th><th>الرصيد الأساسي (تعديل يدوي)</th><th>إجازات مرحلة</th></tr></thead>
                         <tbody id="empTableBody"></tbody>
                     </table>
                 </div>
@@ -298,7 +298,7 @@
             { name: "محمد احمد محمد عبدة", fingerprint: "2473", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "احمد سید احمد", fingerprint: "2359", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "صبری احمد محمد", fingerprint: "2011", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
-            { name: "محمد جمال حامد", fingerprint: "2358", dept: "مصنع 5", totalBalance: 21, callers: 0, totalBalance: 21, carriedBalance: 0 },
+            { name: "محمد جمال حامد", fingerprint: "2358", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "احمد حسين عبد المنعم", fingerprint: "2435", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "معتز خلیفه محمد", fingerprint: "2360", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
             { name: "محمد احمد فتحي", fingerprint: "2492", dept: "مصنع 5", totalBalance: 21, carriedBalance: 0 },
@@ -344,6 +344,19 @@
             }
         }
 
+        // تحديث الرصيد الأساسي يدوياً
+        window.updateTotalBalance = async function(fingerprint, val) {
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
+            if (empsSnap.exists()) {
+                let emps = empsSnap.val();
+                let index = emps.findIndex(e => e.fingerprint === fingerprint);
+                if (index !== -1) {
+                    emps[index].totalBalance = Number(val) || 0;
+                    await set(ref(db, 'employees_2027'), emps);
+                }
+            }
+        }
+
         window.updateCarriedBalance = async function(fingerprint, val) {
             const empsSnap = await get(child(ref(db), 'employees_2027'));
             if (empsSnap.exists()) {
@@ -382,6 +395,7 @@
             applyForm.style.display = 'block';
         }
 
+        // استعلام الرصيد والإجازات والاذونات بالأنواع المحددة بالتفصيل
         window.checkDashboardEmployee = async function() {
             const fp = document.getElementById('dashFingerprint').value.trim();
             const empsSnap = await get(child(ref(db), 'employees_2027'));
@@ -398,35 +412,44 @@
             }
 
             let reqs = reqsSnap.exists() ? Object.values(reqsSnap.val()) : [];
-            let empReqs = reqs.filter(r => r.fingerprint === fp && r.status === 'تم تنفيذ الإجازة');
+            let empExecutedReqs = reqs.filter(r => r.fingerprint === fp && r.status === 'تم تنفيذ الإجازة');
 
-            let countAreda = 0, countSanawya = 0, countEtiady = 0, countCarried = 0, countHalfDay = 0, countSick = 0, countMarriage = 0, countDeath = 0;
-            empReqs.forEach(r => {
-                let d = r.daysCount || 1;
-                if (r.type === 'إجازة عارضة') countAreda += d;
-                else if (r.type === 'إجازة سنوية') countSanawya += d;
-                else if (r.type === 'إجازة اعتيادي') countEtiady += d;
-                else if (r.type === 'مرحل') countCarried += d;
-                else if (r.type === 'نصف يوم') countHalfDay += d;
-                else if (r.type === 'إجازة مرضية') countSick += d;
-                else if (r.type === 'إجازة زواج') countMarriage += d;
-                else if (r.type === 'إجازة وفاة') countDeath += d;
+            let statsByType = {};
+            empExecutedReqs.forEach(r => {
+                let typeName = r.type || 'أخرى';
+                let days = r.daysCount !== undefined ? r.daysCount : 1;
+                if (!statsByType[typeName]) {
+                    statsByType[typeName] = { count: 0, totalDays: 0 };
+                }
+                statsByType[typeName].count += 1;
+                statsByType[typeName].totalDays += days;
             });
 
-            let allEmpReqs = reqs.filter(r => r.fingerprint === fp);
-            let totalPermissionsAll = allEmpReqs.filter(r => r.type === 'إذن ساعتين').length;
+            let detailsHtml = '';
+            if (Object.keys(statsByType).length === 0) {
+                detailsHtml = `<div style="color: #64748b; font-size: 0.9rem; margin-top: 5px;">لا توجد إجازات منفذة مسجلة لهذا العامل.</div>`;
+            } else {
+                detailsHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px;">`;
+                for (let [type, data] in Object.entries(statsByType)) {
+                    // التعديل هنا لضمان جلب كل نوع بوصفه بالتحديد
+                }
+                // تجميع كل الأنواع بشكل ديناميكي صحيح
+                for (let key in statsByType) {
+                    detailsHtml += `<div style="background:#fff; padding:8px 12px; border:1px solid var(--border); border-radius:4px;"><b>${key}:</b> ${statsByType[key].totalDays} يوم (عدد المرات: ${statsByType[key].count})</div>`;
+                }
+                detailsHtml += `</div>`;
+            }
 
             resultBox.style.display = 'block';
             resultBox.innerHTML = `
                 <h4 style="color: var(--primary); margin-bottom: 8px;">بيانات العامل: ${emp.name} (بصمة: ${emp.fingerprint})</h4>
                 <hr style="margin: 8px 0; border:0; border-top:1px solid var(--border);">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.9rem; margin-top: 10px;">
+                <div style="display: flex; gap: 15px; font-size: 0.95rem; margin-top: 5px;">
                     <div><b>الرصيد الأساسي المتبقي:</b> <span style="color:var(--success); font-weight:bold;">${emp.totalBalance} يوم</span></div>
                     <div><b>الرصيد المرحل المتبقي:</b> <span style="color:var(--secondary); font-weight:bold;">${emp.carriedBalance} يوم</span></div>
-                    <div><b>إجازات عارضة مستنفذة:</b> ${countAreda} يوم</div>
-                    <div><b>إجازات سنوية مستنفذة:</b> ${countSanawya} يوم</div>
-                    <div><b>أذونات الساعات:</b> <span style="color: var(--danger); font-weight: bold;">${totalPermissionsAll} مرات</span></div>
-                </div>`;
+                </div>
+                <div style="margin-تفاصيل: 15px 0 5px 0; font-weight: bold; color: var(--primary);">تفصيل الإجازات والأذونات المنفذة حسب النوع:</div>
+                ${detailsHtml}`;
         }
 
         window.submitVacation = async function(e) {
@@ -530,11 +553,17 @@
                 appBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge ${isDone?'badge-s':(isRejected?'badge-r':'badge-p')}">${r.status}</span></td><td>${!isDone && !isRejected ? `<button class="btn btn-success" onclick="executeVac(${r.originalIndex})">تنفيذ وخصم</button> ` : ''}<button class="btn btn-danger" onclick="deleteRequest(${r.originalIndex})">حذف</button></td></tr>`;
             });
 
-            // العاملين
+            // العاملين (مع إمكانية تعديل الرصيد الأساسي يدوياً بالأيدي)
             let empBody = document.getElementById('empTableBody');
             empBody.innerHTML = '';
             emps.forEach(e => {
-                empBody.innerHTML += `<tr><td>${e.fingerprint}</td><td>${e.name}</td><td>${e.dept}</td><td><b>${e.totalBalance}</b> يوم</td><td><input type="number" min="0" value="${e.carriedBalance}" style="width: 100px; padding: 5px;" onchange="updateCarriedBalance('${e.fingerprint}', this.value)"></td></tr>`;
+                empBody.innerHTML += `<tr>
+                    <td>${e.fingerprint}</td>
+                    <td>${e.name}</td>
+                    <td>${e.dept}</td>
+                    <td><input type="number" value="${e.totalBalance}" style="width: 100px; padding: 5px; font-weight: bold;" onchange="updateTotalBalance('${e.fingerprint}', this.value)"> يوم</td>
+                    <td><input type="number" min="0" value="${e.carriedBalance}" style="width: 100px; padding: 5px;" onchange="updateCarriedBalance('${e.fingerprint}', this.value)"></td>
+                </tr>`;
             });
         }
 
