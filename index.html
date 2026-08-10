@@ -269,7 +269,7 @@
     <!-- سكربت Firebase والربط السحابي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-        import { getDatabase, ref, get, set, update, remove, child } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+        import { getDatabase, ref, get, set, update, remove, child, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCtJUVNr5iqadfwSpOd4sTrS0mrreHJJSk",
@@ -343,15 +343,32 @@
             if (!snap.exists()) {
                 await set(ref(db, 'employees_2027'), INITIAL_EMPLOYEES);
             }
-            loadAllDataFromCloud();
+            
+            // استعادة الصفحة النشطة السابقة عند عمل Refresh لمنع الخروج للصفحة الرئيسية
+            const savedView = localStorage.getItem('current_view') || 'dashboard';
+            switchView(savedView, true);
+            
+            initRealtimeListeners();
         }
 
-        window.switchView = function(viewId) {
+        window.switchView = function(viewId, skipStorage) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
             document.querySelectorAll('aside nav ul li a').forEach(a => a.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active-view');
-            document.getElementById('nav-' + viewId).classList.add('active');
-            loadAllDataFromCloud();
+            
+            const targetView = document.getElementById('view-' + viewId);
+            const targetNav = document.getElementById('nav-' + viewId);
+            
+            if (targetView && targetNav) {
+                targetView.classList.add('active-view');
+                targetNav.classList.add('active');
+                if (!skipStorage) {
+                    localStorage.setItem('current_view', viewId);
+                }
+            } else {
+                document.getElementById('view-dashboard').classList.add('active-view');
+                document.getElementById('nav-dashboard').classList.add('active');
+                localStorage.setItem('current_view', 'dashboard');
+            }
         }
 
         window.tryOpenView = function(viewId) {
@@ -512,10 +529,19 @@
             document.getElementById('applyForm').reset();
             document.getElementById('employeeInfoBox').style.display = 'none';
             document.getElementById('applyForm').style.display = 'none';
-            loadAllDataFromCloud();
         }
 
-        async function loadAllDataFromCloud() {
+        // استخدام onValue لتحديث البيانات تلقائياً وفورياً لجميع الصفحات والمشرفين دون الحاجة لعمل Refresh
+        function initRealtimeListeners() {
+            onValue(ref(db, 'employees_2027'), (snapshot) => {
+                updateUI();
+            });
+            onValue(ref(db, 'requests_2027'), (snapshot) => {
+                updateUI();
+            });
+        }
+
+        async function updateUI() {
             const empsSnap = await get(child(ref(db), 'employees_2027'));
             const reqsSnap = await get(child(ref(db), 'requests_2027'));
 
@@ -590,7 +616,6 @@
             reqs[i].supervisorName = selectedSup;
             reqs[i].status = action === 'approve' ? 'في انتظار موافقة رئيس القسم' : `مرفوض من المشرف (${selectedSup})`;
             await set(ref(db, 'requests_2027'), reqs);
-            loadAllDataFromCloud();
         }
 
         window.deptAction = async function(i, action) {
@@ -598,7 +623,6 @@
             let reqs = reqsSnap.val();
             reqs[i].status = action === 'approve' ? 'معتمد' : 'مرفوض من رئيس القسم';
             await set(ref(db, 'requests_2027'), reqs);
-            loadAllDataFromCloud();
         }
 
         window.executeVac = async function(i) {
@@ -625,7 +649,6 @@
             reqs[i].status = 'تم تنفيذ الإجازة';
             await set(ref(db, 'requests_2027'), reqs);
             alert('تم التنفيذ بنجاح وتحديث الرصيد سحابياً!');
-            loadAllDataFromCloud();
         }
 
         window.deleteRequest = async function(i) {
@@ -647,7 +670,6 @@
             reqs.splice(i, 1);
             await set(ref(db, 'requests_2027'), reqs);
             alert('تم الحذف بنجاح.');
-            loadAllDataFromCloud();
         }
 
         checkAndInitDB();
