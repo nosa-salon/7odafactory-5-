@@ -6,7 +6,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             authDomain: "odafactory-5.firebaseapp.com",
             projectId: "odafactory-5",
             storageBucket: "odafactory-5.firebasestorage.app",
-            databaseURL: "https://odafactory-5-default-rtdb.firebaseio.com",
             messagingSenderId: "925340298374",
             appId: "1:925340298374:web:0b5ba55daedb1f22be3507"
         };
@@ -366,7 +365,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let emp = emps.find(e => e.fingerprint === req.fingerprint);
             if (emp) {
                 let days = req.daysCount || 0;
-                if (req.type !== 'إذن ساعتين' && req.type !== 'إجازة زواج' && req.type !== 'إجازة وفاة' && days > 0) {
+                if (!['إذن ساعتين', 'إجازة زواج', 'إجازة وفاة', 'إجازة مرضية'].includes(req.type) && days > 0) {
                     if (emp.totalBalance >= days) {
                         emp.totalBalance -= days;
                     } else {
