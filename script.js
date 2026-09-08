@@ -220,6 +220,51 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
                 ${detailsHtml}`;
         }
 
+
+        function renderExecutedLeaves(executedReqs) {
+            let dashExecBody = document.getElementById('dashboardExecutedBody');
+            if (!dashExecBody) return;
+            dashExecBody.innerHTML = executedReqs.length === 0
+                ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة لهذا البحث</td></tr>`
+                : '';
+            executedReqs.forEach(r => {
+                dashExecBody.innerHTML += `<tr><td>${r.id || ''}</td><td>${r.name || ''}</td><td>${r.fingerprint || ''}</td><td>${r.type || ''}</td><td>${r.start || ''} لـ ${r.end || r.start || ''}</td><td><b>${r.daysCount ?? 1} يوم</b></td><td><span class="badge badge-s">منفذة</span></td></tr>`;
+            });
+        }
+
+        window.filterExecutedLeaves = function() {
+            const input = document.getElementById('executedLeaveSearch');
+            const info = document.getElementById('executedLeaveSearchInfo');
+            const query = (input?.value || '').trim().toLowerCase();
+            const all = window.executedLeavesData || [];
+
+            if (!query) {
+                renderExecutedLeaves(all);
+                if (info) info.style.display = 'none';
+                return;
+            }
+
+            const filtered = all.filter(r => {
+                const fingerprint = String(r.fingerprint ?? '').toLowerCase();
+                const code = String(r.code ?? r.employeeCode ?? r.workerCode ?? '').toLowerCase();
+                return fingerprint === query || code === query || fingerprint.includes(query) || code.includes(query);
+            });
+
+            renderExecutedLeaves(filtered);
+            if (info) {
+                info.style.display = 'block';
+                info.innerHTML = `تم العثور على <b>${filtered.length}</b> سجل منفذ للكود/البصمة: <b>${query}</b>`;
+            }
+        };
+
+        window.clearExecutedLeaveSearch = function() {
+            const input = document.getElementById('executedLeaveSearch');
+            if (input) input.value = '';
+            const info = document.getElementById('executedLeaveSearchInfo');
+            if (info) info.style.display = 'none';
+            renderExecutedLeaves(window.executedLeavesData || []);
+        };
+
         window.submitVacation = async function(e) {
             e.preventDefault();
             let vacType = document.getElementById('vacType').value;
@@ -286,10 +331,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
 
             let dashExecBody = document.getElementById('dashboardExecutedBody');
             let executedReqs = reqs.filter(r => r.status === 'تم تنفيذ الإجازة');
-            dashExecBody.innerHTML = executedReqs.length === 0 ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة</td></tr>` : '';
-            executedReqs.forEach(r => {
-                dashExecBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-s">منفذة</span></td></tr>`;
-            });
+            window.executedLeavesData = executedReqs;
+            renderExecutedLeaves(executedReqs);
 
             let dashRejBody = document.getElementById('dashboardRejectedBody');
             let rejectedReqs = reqs.filter(r => r.status.includes('مرفوض'));
@@ -365,7 +408,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let emp = emps.find(e => e.fingerprint === req.fingerprint);
             if (emp) {
                 let days = req.daysCount || 0;
-                if (!['إذن ساعتين', 'إجازة زواج', 'إجازة وفاة', 'إجازة مرضية'].includes(req.type) && days > 0) {
+                if (req.type !== 'إذن ساعتين' && req.type !== 'إجازة زواج' && req.type !== 'إجازة وفاة' && days > 0) {
                     if (emp.totalBalance >= days) {
                         emp.totalBalance -= days;
                     } else {
