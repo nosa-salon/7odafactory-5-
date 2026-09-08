@@ -55,6 +55,12 @@
                 </div>
 
                 <h3 style="margin-top: 30px; margin-bottom: 10px;">سجل الإجازات المنفذة نهائياً</h3>
+                <div style="display:flex; gap:10px; max-width:520px; margin:10px 0 15px; flex-wrap:wrap;">
+                    <input type="text" id="executedLeaveSearch" placeholder="ابحث برقم البصمة أو كود العامل" oninput="filterExecutedLeaves()" style="flex:1; min-width:240px;">
+                    <button class="btn" type="button" onclick="filterExecutedLeaves()">بحث</button>
+                    <button class="btn" type="button" onclick="clearExecutedLeaveSearch()" style="background:#64748b;">عرض الكل</button>
+                </div>
+                <div id="executedLeaveSearchInfo" style="display:none; margin-bottom:10px; font-size:0.9rem; color:var(--primary);"></div>
                 <div class="table-box">
                     <table>
                         <thead>
