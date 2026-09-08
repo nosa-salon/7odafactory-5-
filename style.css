@@ -1,0 +1,64 @@
+:root {
+            --primary: #1e293b;
+            --secondary: #0284c7;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #334155;
+            --border: #cbd5e1;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); direction: rtl; text-align: right; display: flex; min-height: 100vh; flex-direction: column; }
+        
+        aside { width: 260px; background-color: var(--primary); color: #fff; position: fixed; height: 100vh; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; }
+        aside .logo { padding: 20px; font-size: 1.1rem; font-weight: bold; background: #0f172a; text-align: center; border-bottom: 1px solid #334155; }
+        aside nav ul { list-style: none; padding: 15px 0; flex-grow: 1; }
+        aside nav ul li a { display: block; padding: 12px 20px; color: #94a3b8; text-decoration: none; cursor: pointer; transition: 0.2s; }
+        aside nav ul li a:hover, aside nav ul li a.active { background: #334155; color: #fff; border-right: 4px solid var(--secondary); }
+
+        .main-wrapper { margin-right: 260px; flex-grow: 1; display: flex; flex-direction: column; transition: 0.3s ease; width: calc(100% - 260px); }
+        header { background: var(--card); padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        main { padding: 30px; flex-grow: 1; }
+
+        .mobile-menu-btn { display: none; background: var(--primary); color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+
+        .view { display: none; }
+        .view.active-view { display: block; }
+
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card { background: var(--card); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid var(--secondary); }
+        .card h3 { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; }
+        .card .num { font-size: 1.6rem; font-weight: bold; color: var(--primary); }
+
+        .table-box { background: var(--card); border-radius: 8px; overflow: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.9rem; white-space: nowrap; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid var(--border); }
+        th { background: #f8fafc; color: var(--primary); }
+
+        .form-card { background: var(--card); padding: 30px; border-radius: 8px; max-width: 600px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 6px; outline: none; font-size: 0.95rem; }
+        
+        .btn { background: var(--secondary); color: #fff; border: none; padding: 9px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn:hover { opacity: 0.9; }
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
+        .badge-p { background: #fef3c7; color: #92400e; }
+        .badge-s { background: #dcfce7; color: #166534; }
+        .badge-r { background: #fee2e2; color: #991b1b; }
+
+        /* Media Queries للموبايل */
+        @media (max-width: 992px) {
+            aside { transform: translateX(100%); }
+            aside.mobile-open { transform: translateX(0); }
+            .main-wrapper { margin-right: 0; width: 100%; }
+            .mobile-menu-btn { display: inline-block; }
+            .sidebar-overlay.active { display: block; }
+            main { padding: 15px; }
+            header { padding: 12px 15px; flex-direction: column; align-items: flex-start; }
+            header > div { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        }
