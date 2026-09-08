@@ -177,7 +177,11 @@
             </div>
 
             <div id="view-approved" class="view">
-                <h2>الإجازات المعتمدة والمرفوضة</h2>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+                    <h2 style="margin:0;">الإجازات المعتمدة والمرفوضة</h2>
+                    <button class="btn btn-danger" type="button" onclick="resetApprovedRejectedLeaves()">🗑️ تصفير الإجازات المعتمدة والمرفوضة</button>
+                </div>
+                <p style="margin:0 0 15px; color:#b91c1c; font-size:13px;">⚠️ التصفير يحذف الإجازات المعتمدة والمنفذة والمرفوضة فقط، ولا يحذف الطلبات المعلقة.</p>
                 <div class="table-box">
                     <table>
                         <thead>
