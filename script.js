@@ -190,7 +190,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let statsByType = {};
             empExecutedReqs.forEach(r => {
                 let typeName = r.type || 'أخرى';
-                let days = r.daysCount !== undefined ? r.daysCount : 1;
+                let days = r.daysCount !== undefined ? (Number(r.daysCount) || 0) : 1;
                 if (!statsByType[typeName]) {
                     statsByType[typeName] = { count: 0, totalDays: 0 };
                 }
@@ -233,7 +233,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             if (isNaN(diffDays) || diffDays < 1) diffDays = 1;
 
             if (vacType === 'نصف يوم') diffDays = 0.5;
-            if (vacType === 'إذن ساعتين' || vacType === 'إجازة زواج' || vacType === 'إجازة وفاة') diffDays = 0;
+            if (vacType === 'إذن ساعتين') diffDays = 0;
+            // الزواج والوفاة والمرضية تُسجل بعدد الأيام الفعلي من التواريخ، لكن لا تُخصم من الرصيد.
+            // هذا يجعل سجل الإجازات والاستعلام يظهران 4 أيام مثلاً للزواج بدلاً من 0.
+            if (vacType === 'إجازة زواج' || vacType === 'إجازة وفاة' || vacType === 'إجازة مرضية') diffDays = Math.max(1, diffDays);
 
             const reqsSnap = await get(child(ref(db), 'requests_2027'));
             let reqs = reqsSnap.exists() ? Object.values(reqsSnap.val()) : [];
@@ -272,6 +275,42 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             });
         }
 
+        function renderExecutedLeaves(list) {
+            const body = document.getElementById('dashboardExecutedBody');
+            if (!body) return;
+            const rows = Array.isArray(list) ? list : [];
+            body.innerHTML = rows.length === 0
+                ? `<tr><td colspan="7" style="text-align:center; color:#64748b;">لا توجد إجازات منفذة مطابقة للبحث</td></tr>`
+                : rows.map(r => `<tr><td>${r.id ?? ''}</td><td>${r.name ?? ''}</td><td>${r.fingerprint ?? ''}</td><td>${r.type ?? ''}</td><td>${r.start ?? ''} لـ ${r.end ?? ''}</td><td><b>${r.daysCount ?? 0} يوم</b></td><td><span class="badge badge-s">منفذة</span></td></tr>`).join('');
+        }
+
+        window.filterExecutedLeaves = function() {
+            const input = document.getElementById('executedLeaveSearch');
+            const info = document.getElementById('executedLeaveSearchInfo');
+            const q = String(input?.value || '').trim().toLowerCase();
+            const all = Array.isArray(window.executedLeavesData) ? window.executedLeavesData : [];
+            if (!q) {
+                renderExecutedLeaves(all);
+                if (info) info.style.display = 'none';
+                return;
+            }
+            const filtered = all.filter(r => [r.fingerprint, r.code, r.employeeCode, r.workerCode]
+                .some(v => String(v ?? '').toLowerCase().includes(q)));
+            renderExecutedLeaves(filtered);
+            if (info) {
+                info.style.display = 'block';
+                info.textContent = `نتيجة البحث: ${filtered.length} سجل من إجمالي ${all.length}`;
+            }
+        };
+
+        window.clearExecutedLeaveSearch = function() {
+            const input = document.getElementById('executedLeaveSearch');
+            if (input) input.value = '';
+            const info = document.getElementById('executedLeaveSearchInfo');
+            if (info) info.style.display = 'none';
+            renderExecutedLeaves(window.executedLeavesData || []);
+        };
+
         async function updateUI() {
             const empsSnap = await get(child(ref(db), 'employees_2027'));
             const reqsSnap = await get(child(ref(db), 'requests_2027'));
@@ -287,10 +326,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
 
             let dashExecBody = document.getElementById('dashboardExecutedBody');
             let executedReqs = reqs.filter(r => r.status === 'تم تنفيذ الإجازة');
-            dashExecBody.innerHTML = executedReqs.length === 0 ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة</td></tr>` : '';
-            executedReqs.forEach(r => {
-                dashExecBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-s">منفذة</span></td></tr>`;
-            });
+            window.executedLeavesData = executedReqs;
+            renderExecutedLeaves(executedReqs);
 
             let dashRejBody = document.getElementById('dashboardRejectedBody');
             let rejectedReqs = reqs.filter(r => r.status.includes('مرفوض'));
