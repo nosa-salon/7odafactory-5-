@@ -7,7 +7,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             projectId: "odafactory-5",
             storageBucket: "odafactory-5.firebasestorage.app",
             messagingSenderId: "925340298374",
-            appId: "1:925340298374:web:0b5ba55daedb1f22be3507"
+            appId: "1:925340298374:web:0b5ba55daedb1f22be3507",
+            databaseURL: "https://odafactory-5-default-rtdb.firebaseio.com"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -220,51 +221,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
                 ${detailsHtml}`;
         }
 
-
-        function renderExecutedLeaves(executedReqs) {
-            let dashExecBody = document.getElementById('dashboardExecutedBody');
-            if (!dashExecBody) return;
-            dashExecBody.innerHTML = executedReqs.length === 0
-                ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة لهذا البحث</td></tr>`
-                : '';
-            executedReqs.forEach(r => {
-                dashExecBody.innerHTML += `<tr><td>${r.id || ''}</td><td>${r.name || ''}</td><td>${r.fingerprint || ''}</td><td>${r.type || ''}</td><td>${r.start || ''} لـ ${r.end || r.start || ''}</td><td><b>${r.daysCount ?? 1} يوم</b></td><td><span class="badge badge-s">منفذة</span></td></tr>`;
-            });
-        }
-
-        window.filterExecutedLeaves = function() {
-            const input = document.getElementById('executedLeaveSearch');
-            const info = document.getElementById('executedLeaveSearchInfo');
-            const query = (input?.value || '').trim().toLowerCase();
-            const all = window.executedLeavesData || [];
-
-            if (!query) {
-                renderExecutedLeaves(all);
-                if (info) info.style.display = 'none';
-                return;
-            }
-
-            const filtered = all.filter(r => {
-                const fingerprint = String(r.fingerprint ?? '').toLowerCase();
-                const code = String(r.code ?? r.employeeCode ?? r.workerCode ?? '').toLowerCase();
-                return fingerprint === query || code === query || fingerprint.includes(query) || code.includes(query);
-            });
-
-            renderExecutedLeaves(filtered);
-            if (info) {
-                info.style.display = 'block';
-                info.innerHTML = `تم العثور على <b>${filtered.length}</b> سجل منفذ للكود/البصمة: <b>${query}</b>`;
-            }
-        };
-
-        window.clearExecutedLeaveSearch = function() {
-            const input = document.getElementById('executedLeaveSearch');
-            if (input) input.value = '';
-            const info = document.getElementById('executedLeaveSearchInfo');
-            if (info) info.style.display = 'none';
-            renderExecutedLeaves(window.executedLeavesData || []);
-        };
-
         window.submitVacation = async function(e) {
             e.preventDefault();
             let vacType = document.getElementById('vacType').value;
@@ -331,8 +287,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
 
             let dashExecBody = document.getElementById('dashboardExecutedBody');
             let executedReqs = reqs.filter(r => r.status === 'تم تنفيذ الإجازة');
-            window.executedLeavesData = executedReqs;
-            renderExecutedLeaves(executedReqs);
+            dashExecBody.innerHTML = executedReqs.length === 0 ? `<tr><td colspan="7" style="text-align: center; color: #64748b;">لا توجد إجازات منفذة</td></tr>` : '';
+            executedReqs.forEach(r => {
+                dashExecBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-s">منفذة</span></td></tr>`;
+            });
 
             let dashRejBody = document.getElementById('dashboardRejectedBody');
             let rejectedReqs = reqs.filter(r => r.status.includes('مرفوض'));
@@ -408,7 +366,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let emp = emps.find(e => e.fingerprint === req.fingerprint);
             if (emp) {
                 let days = req.daysCount || 0;
-                if (req.type !== 'إذن ساعتين' && req.type !== 'إجازة زواج' && req.type !== 'إجازة وفاة' && days > 0) {
+                if (!['إذن ساعتين', 'إجازة زواج', 'إجازة وفاة', 'إجازة مرضية'].includes(req.type) && days > 0) {
                     if (emp.totalBalance >= days) {
                         emp.totalBalance -= days;
                     } else {
@@ -432,7 +390,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let emps = empsSnap.val();
             let req = reqs[i];
 
-            if (req.status === 'تم تنفيذ الإجازة' && req.daysCount > 0) {
+            if (req.status === 'تم تنفيذ الإجازة' && !['إذن ساعتين', 'إجازة زواج', 'إجازة وفاة', 'إجازة مرضية'].includes(req.type) && req.daysCount > 0) {
                 let emp = emps.find(e => e.fingerprint === req.fingerprint);
                 if (emp) {
                     emp.totalBalance += req.daysCount;
@@ -443,6 +401,31 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             reqs.splice(i, 1);
             await set(ref(db, 'requests_2027'), reqs);
             alert('تم الحذف بنجاح.');
+        }
+
+        window.resetApprovedRejectedLeaves = async function() {
+            if (!confirm('⚠️ سيتم حذف جميع الإجازات المعتمدة والمنفذة والمرفوضة نهائياً، مع الإبقاء على الطلبات المعلقة. هل تريد المتابعة؟')) return;
+
+            const reqsSnap = await get(child(ref(db), 'requests_2027'));
+            if (!reqsSnap.exists()) {
+                alert('لا توجد سجلات إجازات للحذف.');
+                return;
+            }
+
+            const reqs = Object.values(reqsSnap.val());
+            const remaining = reqs.filter(r => {
+                const status = String(r.status || '');
+                return status !== 'معتمد' && status !== 'تم تنفيذ الإجازة' && !status.includes('مرفوض');
+            });
+
+            const deletedCount = reqs.length - remaining.length;
+            if (deletedCount === 0) {
+                alert('لا توجد إجازات معتمدة أو منفذة أو مرفوضة لتصفيرها.');
+                return;
+            }
+
+            await set(ref(db, 'requests_2027'), remaining);
+            alert(`تم تصفير السجل بنجاح وحذف ${deletedCount} طلب/طلبات. الطلبات المعلقة لم تتأثر.`);
         }
 
         checkAndInitDB();
