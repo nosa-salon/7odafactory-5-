@@ -131,6 +131,53 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             }
         }
 
+        window.addNewEmployee = async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('newEmployeeName').value.trim();
+            const fingerprint = document.getElementById('newEmployeeFingerprint').value.trim();
+            const dept = document.getElementById('newEmployeeDept').value.trim();
+            const totalBalance = Number(document.getElementById('newEmployeeTotalBalance').value);
+            const carriedBalance = Number(document.getElementById('newEmployeeCarriedBalance').value);
+
+            if (!name || !fingerprint || !dept) {
+                alert('من فضلك أكمل اسم العامل ورقم البصمة والقسم.');
+                return;
+            }
+            if (!Number.isFinite(totalBalance) || totalBalance < 0 || !Number.isFinite(carriedBalance) || carriedBalance < 0) {
+                alert('الرصيد الأساسي والإجازات المرحلة يجب أن تكون أرقامًا صحيحة أو نصف يوم وألا تكون سالبة.');
+                return;
+            }
+
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
+            let emps = empsSnap.exists() ? empsSnap.val() : [];
+            if (!Array.isArray(emps)) emps = Object.values(emps);
+
+            const normalizeDigits = (value) => String(value ?? '').trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+            const fpNormalized = normalizeDigits(fingerprint);
+            const duplicate = emps.some(emp => normalizeDigits(emp.fingerprint) === fpNormalized);
+            if (duplicate) {
+                alert('رقم البصمة موجود بالفعل لعامل آخر، ولم يتم إضافة عامل جديد.');
+                return;
+            }
+
+            const newEmployee = {
+                name,
+                fingerprint,
+                dept,
+                totalBalance,
+                carriedBalance
+            };
+
+            emps.push(newEmployee);
+            await set(ref(db, 'employees_2027'), emps);
+
+            alert('تمت إضافة العامل بنجاح، وسيظهر الآن تلقائيًا في قائمة العاملين والاستعلامات وكل الحسابات المرتبطة بالنظام.');
+            document.getElementById('addEmployeeForm').reset();
+            document.getElementById('newEmployeeTotalBalance').value = '0';
+            document.getElementById('newEmployeeCarriedBalance').value = '0';
+        };
+
         window.updateCarriedBalance = async function(fingerprint, val) {
             const empsSnap = await get(child(ref(db), 'employees_2027'));
             if (empsSnap.exists()) {
