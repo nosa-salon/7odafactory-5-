@@ -202,6 +202,37 @@
 
             <div id="view-employees" class="view">
                 <h2>قائمة العاملين المسجلين بالمصنع</h2>
+
+                <div class="form-card" style="max-width:100%; margin-bottom:20px;">
+                    <h3 style="margin-top:0;">➕ إضافة عامل جديد</h3>
+                    <p style="color:#64748b; font-size:13px; margin-bottom:15px;">أدخل بيانات العامل يدويًا، وسيتم حفظه سحابيًا وظهوره تلقائيًا في كل الاستعلامات وحسابات الإجازات.</p>
+                    <form id="addEmployeeForm" onsubmit="addNewEmployee(event)">
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px;">
+                            <div class="form-group" style="margin:0;">
+                                <label>اسم العامل</label>
+                                <input type="text" id="newEmployeeName" placeholder="اسم العامل بالكامل" required>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label>رقم البصمة</label>
+                                <input type="text" id="newEmployeeFingerprint" placeholder="مثال: 2500" required>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label>القسم</label>
+                                <input type="text" id="newEmployeeDept" placeholder="مثال: مصنع 5" required>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label>الرصيد الأساسي</label>
+                                <input type="number" id="newEmployeeTotalBalance" min="0" step="0.5" value="0" required>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label>الإجازات المرحلة</label>
+                                <input type="number" id="newEmployeeCarriedBalance" min="0" step="0.5" value="0" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success" style="margin-top:15px;">حفظ العامل الجديد</button>
+                    </form>
+                </div>
+
                 <div class="table-box">
                     <table>
                         <thead><tr><th>رقم البصمة</th><th>اسم العامل</th><th>القسم</th><th>الرصيد الأساسي (تعديل يدوي)</th><th>إجازات مرحلة</th></tr></thead>
