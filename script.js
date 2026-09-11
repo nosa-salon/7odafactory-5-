@@ -468,18 +468,18 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let supBody = document.getElementById('supTableBody');
             supBody.innerHTML = '';
             let pendingSup = reqs.map((r, index) => ({...r, originalIndex: index})).filter(r => r.status === 'في انتظار موافقة المشرف');
-            if (pendingSup.length === 0) supBody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #64748b;">لا توجد طلبات معلقة للمشرف</td></tr>`;
+            if (pendingSup.length === 0) supBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b;">لا توجد طلبات معلقة للمشرف</td></tr>`;
             pendingSup.forEach(r => {
                 let supervisorOptions = SUPERVISORS_LIST.map(name => `<option value="${name}">${name}</option>`).join('');
-                supBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><b>${Number((emps.find(e => String(e.fingerprint) === String(r.fingerprint)) || {}).totalBalance) || 0} يوم</b></td><td><b>${Number((emps.find(e => String(e.fingerprint) === String(r.fingerprint)) || {}).carriedBalance) || 0} يوم</b></td><td><span class="badge badge-p">${r.status}</span></td><td><div style="display:flex; flex-direction:column; gap:5px;"><select id="supSelect-${r.originalIndex}"><option value="">اختر المشرف...</option>${supervisorOptions}</select><div style="display:flex; gap:5px;"><button class="btn btn-success" onclick="supAction(${r.originalIndex}, 'approve')">موافقة</button><button class="btn btn-danger" onclick="supAction(${r.originalIndex}, 'reject')">رفض</button></div></div></td></tr>`;
+                supBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-p">${r.status}</span></td><td><div style="display:flex; flex-direction:column; gap:5px;"><select id="supSelect-${r.originalIndex}"><option value="">اختر المشرف...</option>${supervisorOptions}</select><div style="display:flex; gap:5px;"><button class="btn btn-success" onclick="supAction(${r.originalIndex}, 'approve')">موافقة</button><button class="btn btn-danger" onclick="supAction(${r.originalIndex}, 'reject')">رفض</button></div></div></td></tr>`;
             });
 
             let deptBody = document.getElementById('deptTableBody');
             deptBody.innerHTML = '';
             let pendingDept = reqs.map((r, index) => ({...r, originalIndex: index})).filter(r => r.status === 'في انتظار موافقة رئيس القسم');
-            if (pendingDept.length === 0) deptBody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #64748b;">لا توجد طلبات لرئيس القسم</td></tr>`;
+            if (pendingDept.length === 0) deptBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b;">لا توجد طلبات لرئيس القسم</td></tr>`;
             pendingDept.forEach(r => {
-                deptBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><b>${Number((emps.find(e => String(e.fingerprint) === String(r.fingerprint)) || {}).totalBalance) || 0} يوم</b></td><td><b>${Number((emps.find(e => String(e.fingerprint) === String(r.fingerprint)) || {}).carriedBalance) || 0} يوم</b></td><td><span class="badge badge-p">بواسطة مشرف: ${r.supervisorName}</span></td><td><button class="btn btn-success" onclick="deptAction(${r.originalIndex}, 'approve')">اعتماد</button> <button class="btn btn-danger" onclick="deptAction(${r.originalIndex}, 'reject')">رفض</button></td></tr>`;
+                deptBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.fingerprint}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge badge-p">بواسطة مشرف: ${r.supervisorName}</span></td><td><button class="btn btn-success" onclick="deptAction(${r.originalIndex}, 'approve')">اعتماد</button> <button class="btn btn-danger" onclick="deptAction(${r.originalIndex}, 'reject')">رفض</button></td></tr>`;
             });
 
             let appBody = document.getElementById('approvedTableBody');
