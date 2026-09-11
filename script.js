@@ -285,6 +285,20 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             // هذا يجعل سجل الإجازات والاستعلام يظهران 4 أيام مثلاً للزواج بدلاً من 0.
             if (vacType === 'إجازة زواج' || vacType === 'إجازة وفاة' || vacType === 'إجازة مرضية') diffDays = Math.max(1, diffDays);
 
+            // الإجازة المرحّلة تُخصم من الرصيد المرحّل فقط، ولا تُخصم من الرصيد الأساسي.
+            // نتحقق منها عند تقديم الطلب أيضًا حتى لا يتم إنشاء طلب لا يمكن تنفيذه.
+            if (vacType === 'مرحل') {
+                const carried = Number(currentActiveEmployee?.carriedBalance) || 0;
+                if (carried <= 0) {
+                    alert('لا يوجد رصيد مرحل لهذا العامل.');
+                    return;
+                }
+                if (carried < diffDays) {
+                    alert(`لا يوجد رصيد مرحل كافٍ. الرصيد المرحل المتاح: ${carried} يوم، والمطلوب: ${diffDays} يوم.`);
+                    return;
+                }
+            }
+
             const reqsSnap = await get(child(ref(db), 'requests_2027'));
             let reqs = reqsSnap.exists() ? Object.values(reqsSnap.val()) : [];
 
@@ -496,7 +510,18 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let emp = emps.find(e => e.fingerprint === req.fingerprint);
             if (emp) {
                 let days = req.daysCount || 0;
-                if (!['إذن ساعتين', 'إجازة زواج', 'إجازة وفاة', 'إجازة مرضية'].includes(req.type) && days > 0) {
+                if (req.type === 'مرحل' && days > 0) {
+                    const carried = Number(emp.carriedBalance) || 0;
+                    if (carried <= 0) {
+                        alert('لا يوجد رصيد مرحل لهذا العامل.');
+                        return;
+                    }
+                    if (carried < days) {
+                        alert(`لا يوجد رصيد مرحل كافٍ. الرصيد المرحل المتاح: ${carried} يوم، والمطلوب: ${days} يوم.`);
+                        return;
+                    }
+                    emp.carriedBalance = carried - days;
+                } else if (!['إذن ساعتين', 'إجازة زواج', 'إجازة وفاة', 'إجازة مرضية'].includes(req.type) && days > 0) {
                     if (emp.totalBalance >= days) {
                         emp.totalBalance -= days;
                     } else {
@@ -520,10 +545,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let emps = empsSnap.val();
             let req = reqs[i];
 
-            if (req.status === 'تم تنفيذ الإجازة' && !['إذن ساعتين', 'إجازة زواج', 'إجازة وفاة', 'إجازة مرضية'].includes(req.type) && req.daysCount > 0) {
+            if (req.status === 'تم تنفيذ الإجازة' && req.daysCount > 0) {
                 let emp = emps.find(e => e.fingerprint === req.fingerprint);
                 if (emp) {
-                    emp.totalBalance += req.daysCount;
+                    if (req.type === 'مرحل') {
+                        emp.carriedBalance = (Number(emp.carriedBalance) || 0) + Number(req.daysCount);
+                    } else if (!['إذن ساعتين', 'إجازة زواج', 'إجازة وفاة', 'إجازة مرضية'].includes(req.type)) {
+                        emp.totalBalance += req.daysCount;
+                    }
                     await set(ref(db, 'employees_2027'), emps);
                 }
             }
