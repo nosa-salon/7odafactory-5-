@@ -358,6 +358,59 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             renderExecutedLeaves(window.executedLeavesData || []);
         };
 
+        function renderEmployees(list) {
+            const empBody = document.getElementById('empTableBody');
+            if (!empBody) return;
+            const rows = Array.isArray(list) ? list : [];
+            empBody.innerHTML = rows.length === 0
+                ? `<tr><td colspan="6" style="text-align:center; color:#64748b;">لا توجد بيانات مطابقة للبحث</td></tr>`
+                : rows.map(e => `<tr>
+                    <td><b>${e.fingerprint ?? ''}</b></td>
+                    <td>${e.name ?? ''}</td>
+                    <td>${e.dept ?? ''}</td>
+                    <td><input type="number" min="0" step="0.5" value="${e.totalBalance ?? 0}" style="width:100px; padding:5px; font-weight:bold;" onchange="updateTotalBalance('${String(e.fingerprint ?? '').replace(/'/g, "\\'")}', this.value)"> يوم</td>
+                    <td><input type="number" min="0" step="0.5" value="${e.carriedBalance ?? 0}" style="width:100px; padding:5px;" onchange="updateCarriedBalance('${String(e.fingerprint ?? '').replace(/'/g, "\\'")}', this.value)"></td>
+                    <td><button class="btn btn-danger" type="button" onclick="deleteEmployee('${String(e.fingerprint ?? '').replace(/'/g, "\\'")}')">🗑️ حذف العامل</button></td>
+                </tr>`).join('');
+        }
+
+        window.filterEmployeeList = function() {
+            const input = document.getElementById('employeeListSearch');
+            const info = document.getElementById('employeeListSearchInfo');
+            const q = String(input?.value || '').trim().toLowerCase();
+            const all = Array.isArray(window.allEmployeesData) ? window.allEmployeesData : [];
+            const normalize = value => String(value ?? '').toLowerCase().trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+            const query = normalize(q);
+            const filtered = !query ? all : all.filter(e => [e.fingerprint, e.code, e.employeeCode, e.workerCode, e.employee_code, e.worker_code, e.empCode, e.employeeId, e.workerId, e.name, e.dept].some(v => normalize(v).includes(query)));
+            renderEmployees(filtered);
+            if (info) { info.style.display = query ? 'block' : 'none'; info.textContent = `نتيجة البحث: ${filtered.length} عامل من إجمالي ${all.length}`; }
+        };
+
+        window.clearEmployeeListSearch = function() {
+            const input = document.getElementById('employeeListSearch');
+            if (input) input.value = '';
+            const info = document.getElementById('employeeListSearchInfo');
+            if (info) info.style.display = 'none';
+            renderEmployees(window.allEmployeesData || []);
+        };
+
+        window.deleteEmployee = async function(fingerprint) {
+            const fp = String(fingerprint ?? '').trim();
+            if (!fp) return;
+            const empsSnap = await get(child(ref(db), 'employees_2027'));
+            if (!empsSnap.exists()) { alert('لا توجد بيانات للعاملين.'); return; }
+            let emps = empsSnap.val();
+            if (!Array.isArray(emps)) emps = Object.values(emps);
+            const index = emps.findIndex(e => String(e.fingerprint ?? '').trim() === fp);
+            if (index === -1) { alert('العامل غير موجود.'); return; }
+            const emp = emps[index];
+            const confirmed = confirm(`⚠️ هل تريد حذف العامل نهائيًا من قائمة العاملين؟\n\nالاسم: ${emp.name || ''}\nالبصمة: ${emp.fingerprint || ''}\nالقسم: ${emp.dept || ''}\n\nسيتم حذف العامل من قائمة العاملين فقط، ولن يتم حذف سجل الإجازات الموجود له.`);
+            if (!confirmed) return;
+            emps.splice(index, 1);
+            await set(ref(db, 'employees_2027'), emps);
+            alert('تم حذف العامل من قائمة العاملين بنجاح.');
+        };
+
         async function updateUI() {
             const empsSnap = await get(child(ref(db), 'employees_2027'));
             const reqsSnap = await get(child(ref(db), 'requests_2027'));
@@ -410,17 +463,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
                 appBody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.type}</td><td>${r.start} لـ ${r.end}</td><td><b>${r.daysCount} يوم</b></td><td><span class="badge ${isDone?'badge-s':(isRejected?'badge-r':'badge-p')}">${r.status}</span></td><td>${!isDone && !isRejected ? `<button class="btn btn-success" onclick="executeVac(${r.originalIndex})">تنفيذ وخصم</button> ` : ''}<button class="btn btn-danger" onclick="deleteRequest(${r.originalIndex})">حذف</button></td></tr>`;
             });
 
-            let empBody = document.getElementById('empTableBody');
-            empBody.innerHTML = '';
-            emps.forEach(e => {
-                empBody.innerHTML += `<tr>
-                    <td>${e.fingerprint}</td>
-                    <td>${e.name}</td>
-                    <td>${e.dept}</td>
-                    <td><input type="number" value="${e.totalBalance}" style="width: 100px; padding: 5px; font-weight: bold;" onchange="updateTotalBalance('${e.fingerprint}', this.value)"> يوم</td>
-                    <td><input type="number" min="0" value="${e.carriedBalance}" style="width: 100px; padding: 5px;" onchange="updateCarriedBalance('${e.fingerprint}', this.value)"></td>
-                </tr>`;
-            });
+            window.allEmployeesData = emps;
+            const currentEmployeeSearch = document.getElementById('employeeListSearch')?.value?.trim() || '';
+            if (currentEmployeeSearch) filterEmployeeList();
+            else renderEmployees(emps);
         }
 
         window.supAction = async function(i, action) {
