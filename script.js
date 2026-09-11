@@ -76,8 +76,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             }
             
             // استعادة الصفحة النشطة السابقة عند عمل Refresh لمنع الخروج للصفحة الرئيسية
-            const savedView = localStorage.getItem('current_view') || 'dashboard';
-            switchView(savedView, true);
+            // حفظ الصفحة الحالية لكل تبويب/نافذة على حدة، حتى لا تنتقل صفحة محمية
+            // إلى تبويب آخر، وتظل الصفحة نفسها بعد Refresh.
+            const savedView = sessionStorage.getItem('current_view') || 'dashboard';
+            const protectedViews = ['supervisor', 'department', 'approved', 'employees'];
+            const canRestore = savedView === 'dashboard' ||
+                !protectedViews.includes(savedView) ||
+                sessionStorage.getItem('page_auth_' + savedView) === '1';
+            switchView(canRestore ? savedView : 'dashboard', true);
             
             initRealtimeListeners();
         }
@@ -93,12 +99,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
                 targetView.classList.add('active-view');
                 targetNav.classList.add('active');
                 if (!skipStorage) {
-                    localStorage.setItem('current_view', viewId);
+                    sessionStorage.setItem('current_view', viewId);
                 }
             } else {
                 document.getElementById('view-dashboard').classList.add('active-view');
                 document.getElementById('nav-dashboard').classList.add('active');
-                localStorage.setItem('current_view', 'dashboard');
+                sessionStorage.setItem('current_view', 'dashboard');
             }
         }
 
@@ -106,15 +112,24 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
             let pass = "";
             if (viewId === 'supervisor') {
                 pass = prompt("أدخل كلمة مرور صفحة طلبات المشرف:");
-                if (pass === "255166") switchView('supervisor');
+                if (pass === "255166") {
+                    sessionStorage.setItem('page_auth_supervisor', '1');
+                    switchView('supervisor');
+                }
                 else if (pass !== null) alert("كلمة المرور غير صحيحة!");
             } else if (viewId === 'department') {
                 pass = prompt("أدخل كلمة مرور صفحة رئيس القسم:");
-                if (pass === "kareem150140") switchView('department');
+                if (pass === "kareem150140") {
+                    sessionStorage.setItem('page_auth_department', '1');
+                    switchView('department');
+                }
                 else if (pass !== null) alert("كلمة المرور غير صحيحة!");
             } else if (viewId === 'approved' || viewId === 'employees') {
                 pass = prompt("أدخل كلمة المرور:");
-                if (pass === "0125260775mM##") switchView(viewId);
+                if (pass === "0125260775mM##") {
+                    sessionStorage.setItem('page_auth_' + viewId, '1');
+                    switchView(viewId);
+                }
                 else if (pass !== null) alert("كلمة المرور غير صحيحة!");
             }
         }
