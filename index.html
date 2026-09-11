@@ -233,9 +233,19 @@
                     </form>
                 </div>
 
+                <div class="form-card" style="max-width:100%; margin-bottom:20px;">
+                    <h3 style="margin-top:0;">🔎 البحث في قائمة العاملين</h3>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <input type="text" id="employeeListSearch" placeholder="ابحث برقم البصمة أو كود العامل أو الاسم أو القسم" oninput="filterEmployeeList()" style="flex:1; min-width:260px;">
+                        <button class="btn" type="button" onclick="filterEmployeeList()">بحث</button>
+                        <button class="btn" type="button" onclick="clearEmployeeListSearch()" style="background:#64748b;">عرض الكل</button>
+                    </div>
+                    <div id="employeeListSearchInfo" style="display:none; margin-top:10px; font-size:.9rem; color:var(--primary);"></div>
+                </div>
+
                 <div class="table-box">
                     <table>
-                        <thead><tr><th>رقم البصمة</th><th>اسم العامل</th><th>القسم</th><th>الرصيد الأساسي (تعديل يدوي)</th><th>إجازات مرحلة</th></tr></thead>
+                        <thead><tr><th>رقم البصمة / الكود</th><th>اسم العامل</th><th>القسم</th><th>الرصيد الأساسي (تعديل يدوي)</th><th>إجازات مرحلة</th><th>الإجراءات</th></tr></thead>
                         <tbody id="empTableBody"></tbody>
                     </table>
                 </div>
